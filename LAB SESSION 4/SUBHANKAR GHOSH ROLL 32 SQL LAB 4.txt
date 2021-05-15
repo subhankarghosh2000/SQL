@@ -1,0 +1,381 @@
+mysql> create table sailors(sid int not null,
+    -> sname varchar(32),
+    -> rating int,
+    -> age numeric(10,2),
+    -> primary key(sid)
+    -> );
+Query OK, 0 rows affected (0.10 sec)
+
+mysql> desc sailors
+    -> ;
++--------+---------------+------+-----+---------+-------+
+| Field  | Type          | Null | Key | Default | Extra |
++--------+---------------+------+-----+---------+-------+
+| sid    | int           | NO   | PRI | NULL    |       |
+| sname  | varchar(32)   | YES  |     | NULL    |       |
+| rating | int           | YES  |     | NULL    |       |
+| age    | decimal(10,2) | YES  |     | NULL    |       |
++--------+---------------+------+-----+---------+-------+
+4 rows in set (0.04 sec)
+
+mysql> create table boats(bid int not null primary key,
+    -> bname varchar(32),
+    -> color varchar(20)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc boats
+    -> ;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| bid   | int         | NO   | PRI | NULL    |       |
+| bname | varchar(32) | YES  |     | NULL    |       |
+| color | varchar(20) | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.02 sec)
+mysql> create table reserves(sid int not null,
+    -> bid int not null,
+    -> day char(20) not null,
+    -> constraint PK_reserves primary key(sid,bid),
+    -> foreign key(sid) references sailors(sid),
+    -> foreign key(bid) references boats(bid)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> desc reserves;
++-------+----------+------+-----+---------+-------+
+| Field | Type     | Null | Key | Default | Extra |
++-------+----------+------+-----+---------+-------+
+| sid   | int      | NO   | PRI | NULL    |       |
+| bid   | int      | NO   | PRI | NULL    |       |
+| day   | char(20) | NO   |     | NULL    |       |
++-------+----------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+mysql> insert into sailors values(22,'Tarun',10,40);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sailors values(29,'Arun',8,72);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sailors values(25,'Barun',9,60.5);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into sailors values(15,'Carun',5,70.5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sailors values(14,'Darun',4,40.5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from sailors;
++-----+-------+--------+-------+
+| sid | sname | rating | age   |
++-----+-------+--------+-------+
+|  14 | Darun |      4 | 40.50 |
+|  15 | Carun |      5 | 70.50 |
+|  22 | Tarun |     10 | 40.00 |
+|  25 | Barun |      9 | 60.50 |
+|  29 | Arun  |      8 | 72.00 |
++-----+-------+--------+-------+
+5 rows in set (0.01 sec)
+mysql> insert into boats values(101,'Barca','red');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into boats values(102,'Real','green');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into boats values(103,'Juv','blue');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into boats values(104,'Barca','red');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into boats values(105,'Real','yellow');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from boats;
++-----+-------+--------+
+| bid | bname | color  |
++-----+-------+--------+
+| 101 | Barca | red    |
+| 102 | Real  | green  |
+| 103 | Juv   | blue   |
+| 104 | Barca | red    |
+| 105 | Real  | yellow |
++-----+-------+--------+
+5 rows in set (0.00 sec)
+mysql> insert into reserves values(22,101,'Monday');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into reserves values(25,102,'Sunday');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into reserves values(22,102,'Tuesday');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into reserves values(15,103,'Tuesday');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into reserves values(14,101,'Sunday');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from reserves;
++-----+-----+---------+
+| sid | bid | day     |
++-----+-----+---------+
+|  14 | 101 | Sunday  |
+|  15 | 103 | Tuesday |
+|  22 | 101 | Monday  |
+|  22 | 102 | Tuesday |
+|  25 | 102 | Sunday  |
++-----+-----+---------+
+5 rows in set (0.00 sec)
+mysql> select color from boats where bid in (select bid from reserves where sid=(select sid from sailors where sname='Tarun'));
++-------+
+| color |
++-------+
+| red   |
+| green |
++-------+
+2 rows in set (0.01 sec)
+mysql> select sid,sname from sailors where sid=(select sid from reserves where day='Monday');
++-----+-------+
+| sid | sname |
++-----+-------+
+|  22 | Tarun |
++-----+-------+
+1 row in set (0.00 sec)
+mysql> select bid,bname from boats where color in ('red','green');
++-----+-------+
+| bid | bname |
++-----+-------+
+| 101 | Barca |
+| 102 | Real  |
+| 104 | Barca |
++-----+-------+
+3 rows in set (0.00 sec)
+mysql> delete from sailors where age>60;
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`subhankar`.`reserves`, CONSTRAINT `reserves_ibfk_1` FOREIGN KEY (`sid`) REFERENCES `sailors` (`sid`))
+mysql> set foreign_key_checks=0;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delete from sailors where age>60;
+Query OK, 3 rows affected (0.01 sec)
+
+mysql> select * from sailors;
++-----+-------+--------+-------+
+| sid | sname | rating | age   |
++-----+-------+--------+-------+
+|  14 | Darun |      4 | 40.50 |
+|  22 | Tarun |     10 | 40.00 |
++-----+-------+--------+-------+
+2 rows in set (0.00 sec)
+mysql> create table teacher(tid int not null primary key,
+    -> name varchar(20) not null,
+    -> dept varchar(20) not null
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> desc teacher;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| tid   | int         | NO   | PRI | NULL    |       |
+| name  | varchar(20) | NO   |     | NULL    |       |
+| dept  | varchar(20) | NO   |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+mysql> create table subject(subno int not null primary key,
+    -> subtitle char(20) not null
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc subject;
++----------+----------+------+-----+---------+-------+
+| Field    | Type     | Null | Key | Default | Extra |
++----------+----------+------+-----+---------+-------+
+| subno    | int      | NO   | PRI | NULL    |       |
+| subtitle | char(20) | NO   |     | NULL    |       |
++----------+----------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> create table taughtby(tid int not null,
+    -> subno int not null,
+    -> constraint PK_taughtby primary key(tid,subno),
+    -> foreign key(tid) references teacher(tid),
+    -> foreign key(subno) references subject(subno)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc taughtby;
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| tid   | int  | NO   | PRI | NULL    |       |
+| subno | int  | NO   | PRI | NULL    |       |
++-------+------+------+-----+---------+-------+
+2 rows in set (0.02 sec)
+
+mysql> create table student(rollno int not null primary key,
+    -> sname varchar(20) not null,
+    -> city char(20) not null
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> desc student;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| rollno | int         | NO   | PRI | NULL    |       |
+| sname  | varchar(20) | NO   |     | NULL    |       |
+| city   | char(20)    | NO   |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+mysql> insert into teacher values(1,'Sagnik Basu','CSE');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into teacher values(2,'Del Piro','Physics');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into teacher values(3,'Jacob Kante','Chemistry');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into teacher values(4,'Cris Morgan','Biology');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into teacher values(5,'Patrick Viera','ECE');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from teacher;
++-----+---------------+-----------+
+| tid | name          | dept      |
++-----+---------------+-----------+
+|   1 | Sagnik Basu   | CSE       |
+|   2 | Del Piro      | Physics   |
+|   3 | Jacob Kante   | Chemistry |
+|   4 | Cris Morgan   | Biology   |
+|   5 | Patrick Viera | ECE       |
++-----+---------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> insert into subject values(1,'Thermodynamics');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into subject values(2,'Compiler Design');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into subject values(3,'DBMS');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into subject values(4,'Computer Network');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into subject values(5,'Data Mining');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from subject;
++-------+------------------+
+| subno | subtitle         |
++-------+------------------+
+|     1 | Thermodynamics   |
+|     2 | Compiler Design  |
+|     3 | DBMS             |
+|     4 | Computer Network |
+|     5 | Data Mining      |
++-------+------------------+
+5 rows in set (0.00 sec)
+
+mysql> insert into taughtby values(1,4);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into taughtby values(2,5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into taughtby values(3,4);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into taughtby values(4,2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into taughtby values(5,2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from taughtby;
++-----+-------+
+| tid | subno |
++-----+-------+
+|   4 |     2 |
+|   5 |     2 |
+|   1 |     4 |
+|   3 |     4 |
+|   2 |     5 |
++-----+-------+
+5 rows in set (0.00 sec)
+
+mysql> insert into student values(41,'Rummenggie','Kolkata');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into student values(22,'Kahn','Delhi');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into student values(24,'Casillas','Kolkata');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into student values(72,'Halland','Chennai');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into student values(23,'Aubameyang','Mumbai');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into student values(21,'Maldini','Kolkata');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from student;
++--------+------------+---------+
+| rollno | sname      | city    |
++--------+------------+---------+
+|     21 | Maldini    | Kolkata |
+|     22 | Kahn       | Delhi   |
+|     23 | Aubameyang | Mumbai  |
+|     24 | Casillas   | Kolkata |
+|     41 | Rummenggie | Kolkata |
+|     72 | Halland    | Chennai |
++--------+------------+---------+
+6 rows in set (0.00 sec)
+mysql> select name from teacher where dept='Physics' and tid in(select tid from taughtby where subno in(select subno from subject where subtitle='Thermodynamics'));
+Empty set (0.01 sec)
+
+mysql> update subject set subtitle = 'RDBMS' where subtitle = 'DBMS';
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from subject;
++-------+------------------+
+| subno | subtitle         |
++-------+------------------+
+|     1 | Thermodynamics   |
+|     2 | Compiler Design  |
+|     3 | RDBMS            |
+|     4 | Computer Network |
+|     5 | Data Mining      |
++-------+------------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from student where city ='Kolkata' and (rollno>=20 and rollno<=25);
++--------+----------+---------+
+| rollno | sname    | city    |
++--------+----------+---------+
+|     24 | Casillas | Kolkata |
++--------+----------+---------+
+1 row in set (0.00 sec)
+
+mysql> select * from student where city ='Kolkata' and(rollno>=20 and rollno<=25) order by rollno desc;
++--------+----------+---------+
+| rollno | sname    | city    |
++--------+----------+---------+
+|     24 | Casillas | Kolkata |
+|     21 | Maldini  | Kolkata |
++--------+----------+---------+
+2 rows in set (0.00 sec)
+

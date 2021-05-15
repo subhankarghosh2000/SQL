@@ -1,0 +1,241 @@
+mysql> create table DEPT(
+    -> DNO int,
+    -> DNAME varchar(20),
+    -> LOC varchar(20)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> desc DEPT;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| DNO   | int         | YES  |     | NULL    |       |
+| DNAME | varchar(20) | YES  |     | NULL    |       |
+| LOC   | varchar(20) | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+mysql> create table EMP(
+    -> EMPNO int,
+    -> ENAME varchar(20),
+    -> JOB char(15),
+    -> MGR int,
+    -> HIREDAT date,
+    -> SAL int,
+    -> COMM int,
+    -> DEPTNO int NOT NULL REFERENCES DEPT(DNO),
+    -> PRIMARY KEY (EMPNO)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc EMP;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| EMPNO   | int         | NO   | PRI | NULL    |       |
+| ENAME   | varchar(20) | YES  |     | NULL    |       |
+| JOB     | char(15)    | YES  |     | NULL    |       |
+| MGR     | int         | YES  |     | NULL    |       |
+| HIREDAT | date        | YES  |     | NULL    |       |
+| SAL     | int         | YES  |     | NULL    |       |
+| COMM    | int         | YES  |     | NULL    |       |
+| DEPTNO  | int         | NO   |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+8 rows in set (0.01 sec)
+mysql> alter table DEPT add constraint DNO primary key (DNO);
+Query OK, 0 rows affected (0.13 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc DEPT;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| DNO   | int         | NO   | PRI | NULL    |       |
+| DNAME | varchar(20) | YES  |     | NULL    |       |
+| LOC   | varchar(20) | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+mysql> alter table EMP add (Phone int);
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc EMP;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| EMPNO   | int         | NO   | PRI | NULL    |       |
+| ENAME   | varchar(20) | YES  |     | NULL    |       |
+| JOB     | char(15)    | YES  |     | NULL    |       |
+| MGR     | int         | YES  |     | NULL    |       |
+| HIREDAT | date        | YES  |     | NULL    |       |
+| SAL     | int         | YES  |     | NULL    |       |
+| COMM    | int         | YES  |     | NULL    |       |
+| DEPTNO  | int         | NO   |     | NULL    |       |
+| Phone   | int         | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+9 rows in set (0.01 sec)
+mysql> alter table EMP modify JOB varchar(20);
+Query OK, 0 rows affected (0.07 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc EMP;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| EMPNO   | int         | NO   | PRI | NULL    |       |
+| ENAME   | varchar(20) | YES  |     | NULL    |       |
+| JOB     | varchar(20) | YES  |     | NULL    |       |
+| MGR     | int         | YES  |     | NULL    |       |
+| HIREDAT | date        | YES  |     | NULL    |       |
+| SAL     | int         | YES  |     | NULL    |       |
+| COMM    | int         | YES  |     | NULL    |       |
+| DEPTNO  | int         | NO   |     | NULL    |       |
+| Phone   | int         | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+9 rows in set (0.01 sec)
+mysql> alter table EMP drop column Phone;
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc EMP;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| EMPNO   | int         | NO   | PRI | NULL    |       |
+| ENAME   | varchar(20) | YES  |     | NULL    |       |
+| JOB     | varchar(20) | YES  |     | NULL    |       |
+| MGR     | int         | YES  |     | NULL    |       |
+| HIREDAT | date        | YES  |     | NULL    |       |
+| SAL     | int         | YES  |     | NULL    |       |
+| COMM    | int         | YES  |     | NULL    |       |
+| DEPTNO  | int         | NO   |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+8 rows in set (0.01 sec)
+mysql> insert into DEPT values(10,'Accounting','New York');
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into DEPT values(20,'Research','Dallas');
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into DEPT values(30,'Sales','Chicago');
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into DEPT values(40,'Operations','Boston');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from DEPT;
++-----+------------+----------+
+| DNO | DNAME      | LOC      |
++-----+------------+----------+
+|  10 | Accounting | New York |
+|  20 | Research   | Dallas   |
+|  30 | Sales      | Chicago  |
+|  40 | Operations | Boston   |
++-----+------------+----------+
+4 rows in set (0.00 sec)
+mysql> insert into EMP values(7369,'Smith','Clerk',7902,'1980-12-17',800,NULL,20);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7499,'Allen','Salesman',7698,'1981-02-20',1600,300,30);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7521,'Ward','Salesman',7698,'1981-02-22',1250,500,30);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7566,'Jones','Manager',7839,'1981-04-02',2975,NULL,20);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7654,'Martin','Salesman',7698,'1981-09-28',1250,1400,30);
+Query OK, 1 row affected (0.00 sec)
+mysql> insert into EMP values(7698,'Blake','Manager',7839,'1981-05-01',2850,NULL,30);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7782,'Clark','Manager',7839,'1981-06-09',2450,NULL,10);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7788,'Scott','Analyst',7566,'1982-12-09',3000,NULL,20);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7839,'King','President',NULL,'1981-11-17',5000,NULL,10);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7844,'Turner','Salesman',7698,'1981-09-08',1500,500,30);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7876,'Adams','Clerk',7788,'1983-01-12',1100,NULL,20);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7900,'James','Clerk',7698,'1981-12-03',950,NULL,30);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7902,'Ford','Analyst',7566,'1981-12-04',3000,NULL,20);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7934,'Miller','Clerk',7782,'1982-01-23',1300,NULL,10);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from EMP;
++-------+--------+-----------+------+------------+------+------+--------+
+| EMPNO | ENAME  | JOB       | MGR  | HIREDAT    | SAL  | COMM | DEPTNO |
++-------+--------+-----------+------+------------+------+------+--------+
+|  7369 | Smith  | Clerk     | 7902 | 1980-12-17 |  800 | NULL |     20 |
+|  7499 | Allen  | Salesman  | 7698 | 1981-02-20 | 1600 |  300 |     30 |
+|  7521 | Ward   | Salesman  | 7698 | 1981-02-22 | 1250 |  500 |     30 |
+|  7566 | Jones  | Manager   | 7839 | 1981-04-02 | 2975 | NULL |     20 |
+|  7654 | Martin | Salesman  | 7698 | 1981-09-28 | 1250 | 1400 |     30 |
+|  7698 | Blake  | Manager   | 7839 | 1981-05-01 | 2850 | NULL |     30 |
+|  7782 | Clark  | Manager   | 7839 | 1981-06-09 | 2450 | NULL |     10 |
+|  7788 | Scott  | Analyst   | 7566 | 1982-12-09 | 3000 | NULL |     20 |
+|  7839 | King   | President | NULL | 1981-11-17 | 5000 | NULL |     10 |
+|  7844 | Turner | Salesman  | 7698 | 1981-09-08 | 1500 |  500 |     30 |
+|  7876 | Adams  | Clerk     | 7788 | 1983-01-12 | 1100 | NULL |     20 |
+|  7900 | James  | Clerk     | 7698 | 1981-12-03 |  950 | NULL |     30 |
+|  7902 | Ford   | Analyst   | 7566 | 1981-12-04 | 3000 | NULL |     20 |
+|  7934 | Miller | Clerk     | 7782 | 1982-01-23 | 1300 | NULL |     10 |
++-------+--------+-----------+------+------------+------+------+--------+
+14 rows in set (0.00 sec)
+mysql> select * from EMP where JOB='Manager';
++-------+-------+---------+------+------------+------+------+--------+
+| EMPNO | ENAME | JOB     | MGR  | HIREDAT    | SAL  | COMM | DEPTNO |
++-------+-------+---------+------+------------+------+------+--------+
+|  7566 | Jones | Manager | 7839 | 1981-04-02 | 2975 | NULL |     20 |
+|  7698 | Blake | Manager | 7839 | 1981-05-01 | 2850 | NULL |     30 |
+|  7782 | Clark | Manager | 7839 | 1981-06-09 | 2450 | NULL |     10 |
++-------+-------+---------+------+------------+------+------+--------+
+3 rows in set (0.01 sec)
+mysql> select * from EMP where EMPNO=7369;
++-------+-------+-------+------+------------+------+------+--------+
+| EMPNO | ENAME | JOB   | MGR  | HIREDAT    | SAL  | COMM | DEPTNO |
++-------+-------+-------+------+------------+------+------+--------+
+|  7369 | Smith | Clerk | 7902 | 1980-12-17 |  800 | NULL |     20 |
++-------+-------+-------+------+------------+------+------+--------+
+1 row in set (0.01 sec)
+mysql> select * from EMP where HIREDAT='1981-05-01';
++-------+-------+---------+------+------------+------+------+--------+
+| EMPNO | ENAME | JOB     | MGR  | HIREDAT    | SAL  | COMM | DEPTNO |
++-------+-------+---------+------+------------+------+------+--------+
+|  7698 | Blake | Manager | 7839 | 1981-05-01 | 2850 | NULL |     30 |
++-------+-------+---------+------+------------+------+------+--------+
+1 row in set (0.01 sec)
+mysql> select * from EMP where SAL > 1500;
++-------+-------+-----------+------+------------+------+------+--------+
+| EMPNO | ENAME | JOB       | MGR  | HIREDAT    | SAL  | COMM | DEPTNO |
++-------+-------+-----------+------+------------+------+------+--------+
+|  7499 | Allen | Salesman  | 7698 | 1981-02-20 | 1600 |  300 |     30 |
+|  7566 | Jones | Manager   | 7839 | 1981-04-02 | 2975 | NULL |     20 |
+|  7698 | Blake | Manager   | 7839 | 1981-05-01 | 2850 | NULL |     30 |
+|  7782 | Clark | Manager   | 7839 | 1981-06-09 | 2450 | NULL |     10 |
+|  7788 | Scott | Analyst   | 7566 | 1982-12-09 | 3000 | NULL |     20 |
+|  7839 | King  | President | NULL | 1981-11-17 | 5000 | NULL |     10 |
+|  7902 | Ford  | Analyst   | 7566 | 1981-12-04 | 3000 | NULL |     20 |
++-------+-------+-----------+------+------------+------+------+--------+
+7 rows in set (0.00 sec)
+mysql> select * from EMP where COMM is NULL;
++-------+--------+-----------+------+------------+------+------+--------+
+| EMPNO | ENAME  | JOB       | MGR  | HIREDAT    | SAL  | COMM | DEPTNO |
++-------+--------+-----------+------+------------+------+------+--------+
+|  7369 | Smith  | Clerk     | 7902 | 1980-12-17 |  800 | NULL |     20 |
+|  7566 | Jones  | Manager   | 7839 | 1981-04-02 | 2975 | NULL |     20 |
+|  7698 | Blake  | Manager   | 7839 | 1981-05-01 | 2850 | NULL |     30 |
+|  7782 | Clark  | Manager   | 7839 | 1981-06-09 | 2450 | NULL |     10 |
+|  7788 | Scott  | Analyst   | 7566 | 1982-12-09 | 3000 | NULL |     20 |
+|  7839 | King   | President | NULL | 1981-11-17 | 5000 | NULL |     10 |
+|  7876 | Adams  | Clerk     | 7788 | 1983-01-12 | 1100 | NULL |     20 |
+|  7900 | James  | Clerk     | 7698 | 1981-12-03 |  950 | NULL |     30 |
+|  7902 | Ford   | Analyst   | 7566 | 1981-12-04 | 3000 | NULL |     20 |
+|  7934 | Miller | Clerk     | 7782 | 1982-01-23 | 1300 | NULL |     10 |
++-------+--------+-----------+------+------------+------+------+--------+
+10 rows in set (0.00 sec)
+mysql> select * from EMP where ENAME LIKE 'A%';
++-------+-------+----------+------+------------+------+------+--------+
+| EMPNO | ENAME | JOB      | MGR  | HIREDAT    | SAL  | COMM | DEPTNO |
++-------+-------+----------+------+------------+------+------+--------+
+|  7499 | Allen | Salesman | 7698 | 1981-02-20 | 1600 |  300 |     30 |
+|  7876 | Adams | Clerk    | 7788 | 1983-01-12 | 1100 | NULL |     20 |
++-------+-------+----------+------+------------+------+------+--------+
+2 rows in set (0.00 sec)
+

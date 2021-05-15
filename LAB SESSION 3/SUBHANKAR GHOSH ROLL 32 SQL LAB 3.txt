@@ -1,0 +1,292 @@
+mysql> select sysdate() from dual;
++---------------------+
+| sysdate()           |
++---------------------+
+| 2021-05-03 14:55:54 |
++---------------------+
+1 row in set (0.01 sec)
+mysql> select 2*2 from dual;
++-----+
+| 2*2 |
++-----+
+|   4 |
++-----+
+1 row in set (0.00 sec)
+
+mysql> select abs(-15) from dual;
++----------+
+| abs(-15) |
++----------+
+|       15 |
++----------+
+1 row in set (0.01 sec)
+mysql> select round(15.19,1) from dual;
++----------------+
+| round(15.19,1) |
++----------------+
+|           15.2 |
++----------------+
+1 row in set (0.00 sec)
+mysql> select lower('IVAN BAYROSS') from dual;
++-----------------------+
+| lower('IVAN BAYROSS') |
++-----------------------+
+| ivan bayross          |
++-----------------------+
+1 row in set (0.00 sec)
+
+mysql> select upper('IVAN BAYROSS') from dual;
++-----------------------+
+| upper('IVAN BAYROSS') |
++-----------------------+
+| IVAN BAYROSS          |
++-----------------------+
+1 row in set (0.00 sec)
+mysql> select date_add(current_date,interval 5 month) from dual;
++-----------------------------------------+
+| date_add(current_date,interval 5 month) |
++-----------------------------------------+
+| 2021-10-03                              |
++-----------------------------------------+
+1 row in set (0.00 sec)
+mysql> select month('2001-07-01')-month('2001-01-01') from dual;
++-----------------------------------------+
+| month('2001-07-01')-month('2001-01-01') |
++-----------------------------------------+
+|                                       6 |
++-----------------------------------------+
+1 row in set (0.01 sec)
+mysql> select date_format(current_date,'%d/%m/%Y') from dual;
++--------------------------------------+
+| date_format(current_date,'%d/%m/%Y') |
++--------------------------------------+
+| 03/05/2021                           |
++--------------------------------------+
+1 row in set (0.01 sec)
+
+
+mysql> create table DEPT(
+    -> DNO int,
+    -> DNAME varchar(20),
+    -> LOC varchar(20),
+    -> PRIMARY KEY (DNO)					
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> desc DEPT;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| DNO   | int         | NO   | PRI | NULL    |       |
+| DNAME | varchar(20) | YES  |     | NULL    |       |
+| LOC   | varchar(20) | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+mysql> create table EMP(
+    -> EMPNO int,
+    -> ENAME varchar(20),
+    -> JOB varchar(20),
+    -> MGR int,
+    -> HIREDAT date,
+    -> SAL int,
+    -> COMM int,
+    -> DEPTNO int NOT NULL REFERENCES DEPT(DNO),
+    -> PRIMARY KEY (EMPNO)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc EMP;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| EMPNO   | int         | NO   | PRI | NULL    |       |
+| ENAME   | varchar(20) | YES  |     | NULL    |       |
+| JOB     | varchar(20) | YES  |     | NULL    |       |
+| MGR     | int         | YES  |     | NULL    |       |
+| HIREDAT | date        | YES  |     | NULL    |       |
+| SAL     | int         | YES  |     | NULL    |       |
+| COMM    | int         | YES  |     | NULL    |       |
+| DEPTNO  | int         | NO   |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+8 rows in set (0.01 sec)
+mysql> insert into DEPT values(10,'Accounting','New York');
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into DEPT values(20,'Research','Dallas');
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into DEPT values(30,'Sales','Chicago');
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into DEPT values(40,'Operations','Boston');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from DEPT;
++-----+------------+----------+
+| DNO | DNAME      | LOC      |
++-----+------------+----------+
+|  10 | Accounting | New York |
+|  20 | Research   | Dallas   |
+|  30 | Sales      | Chicago  |
+|  40 | Operations | Boston   |
++-----+------------+----------+
+4 rows in set (0.00 sec)
+mysql> insert into EMP values(7369,'Smith','Clerk',7902,'1980-12-17',800,NULL,20);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7499,'Allen','Salesman',7698,'1981-02-20',1600,300,30);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7521,'Ward','Salesman',7698,'1981-02-22',1250,500,30);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7566,'Jones','Manager',7839,'1981-04-02',2975,NULL,20);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7654,'Martin','Salesman',7698,'1981-09-28',1250,1400,30);
+Query OK, 1 row affected (0.00 sec)
+mysql> insert into EMP values(7698,'Blake','Manager',7839,'1981-05-01',2850,NULL,30);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7782,'Clark','Manager',7839,'1981-06-09',2450,NULL,10);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7788,'Scott','Analyst',7566,'1982-12-09',3000,NULL,20);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7839,'King','President',NULL,'1981-11-17',5000,NULL,10);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7844,'Turner','Salesman',7698,'1981-09-08',1500,500,30);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7876,'Adams','Clerk',7788,'1983-01-12',1100,NULL,20);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7900,'James','Clerk',7698,'1981-12-03',950,NULL,30);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7902,'Ford','Analyst',7566,'1981-12-04',3000,NULL,20);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into EMP values(7934,'Miller','Clerk',7782,'1982-01-23',1300,NULL,10);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from EMP;
++-------+--------+-----------+------+------------+------+------+--------+
+| EMPNO | ENAME  | JOB       | MGR  | HIREDAT    | SAL  | COMM | DEPTNO |
++-------+--------+-----------+------+------------+------+------+--------+
+|  7369 | Smith  | Clerk     | 7902 | 1980-12-17 |  800 | NULL |     20 |
+|  7499 | Allen  | Salesman  | 7698 | 1981-02-20 | 1600 |  300 |     30 |
+|  7521 | Ward   | Salesman  | 7698 | 1981-02-22 | 1250 |  500 |     30 |
+|  7566 | Jones  | Manager   | 7839 | 1981-04-02 | 2975 | NULL |     20 |
+|  7654 | Martin | Salesman  | 7698 | 1981-09-28 | 1250 | 1400 |     30 |
+|  7698 | Blake  | Manager   | 7839 | 1981-05-01 | 2850 | NULL |     30 |
+|  7782 | Clark  | Manager   | 7839 | 1981-06-09 | 2450 | NULL |     10 |
+|  7788 | Scott  | Analyst   | 7566 | 1982-12-09 | 3000 | NULL |     20 |
+|  7839 | King   | President | NULL | 1981-11-17 | 5000 | NULL |     10 |
+|  7844 | Turner | Salesman  | 7698 | 1981-09-08 | 1500 |  500 |     30 |
+|  7876 | Adams  | Clerk     | 7788 | 1983-01-12 | 1100 | NULL |     20 |
+|  7900 | James  | Clerk     | 7698 | 1981-12-03 |  950 | NULL |     30 |
+|  7902 | Ford   | Analyst   | 7566 | 1981-12-04 | 3000 | NULL |     20 |
+|  7934 | Miller | Clerk     | 7782 | 1982-01-23 | 1300 | NULL |     10 |
++-------+--------+-----------+------+------------+------+------+--------+
+14 rows in set (0.00 sec)
+mysql> select ENAME from EMP where ENAME like '_i%';
++--------+
+| ENAME  |
++--------+
+| King   |
+| Miller |
++--------+
+2 rows in set (0.01 sec)
+mysql> select ENAME from EMP where JOB <> 'Manager';
++--------+
+| ENAME  |
++--------+
+| Smith  |
+| Allen  |
+| Ward   |
+| Martin |
+| Scott  |
+| King   |
+| Turner |
+| Adams  |
+| James  |
+| Ford   |
+| Miller |
++--------+
+11 rows in set (0.00 sec)
+mysql> select max(SAL) Maximum, min(SAL) Minimum, sum(SAL) Total, avg(SAL) Average from EMP;
++---------+---------+-------+-----------+
+| Maximum | Minimum | Total | Average   |
++---------+---------+-------+-----------+
+|    5000 |     800 | 29025 | 2073.2143 |
++---------+---------+-------+-----------+
+1 row in set (0.01 sec)
+mysql> select JOB,max(SAL) Maximum, min(SAL) Minimum, sum(SAL) Total, avg(SAL) Average from EMP group by JOB;
++-----------+---------+---------+-------+-----------+
+| JOB       | Maximum | Minimum | Total | Average   |
++-----------+---------+---------+-------+-----------+
+| Clerk     |    1300 |     800 |  4150 | 1037.5000 |
+| Salesman  |    1600 |    1250 |  5600 | 1400.0000 |
+| Manager   |    2975 |    2450 |  8275 | 2758.3333 |
+| Analyst   |    3000 |    3000 |  6000 | 3000.0000 |
+| President |    5000 |    5000 |  5000 | 5000.0000 |
++-----------+---------+---------+-------+-----------+
+5 rows in set (0.01 sec)
+
+mysql> select count(*) 'Number of Managers' from EMP where JOB = 'Manager';
++--------------------+
+| Number of Managers |
++--------------------+
+|                  3 |
++--------------------+
+1 row in set (0.00 sec)
+mysql> select ENAME from EMP where HIREDAT > '1908-01-01';
++--------+
+| ENAME  |
++--------+
+| Smith  |
+| Allen  |
+| Ward   |
+| Jones  |
+| Martin |
+| Blake  |
+| Clark  |
+| Scott  |
+| King   |
+| Turner |
+| Adams  |
+| James  |
+| Ford   |
+| Miller |
++--------+
+14 rows in set (0.00 sec)
+mysql> select ENAME from EMP where JOB='Salesman' and SAL=(select max(SAL) from EMP where JOB='Salesman');
++-------+
+| ENAME |
++-------+
+| Allen |
++-------+
+1 row in set (0.01 sec)
+mysql> select ENAME from EMP where JOB='Clerk' and SAL=(select min(SAL) from EMP where JOB='Clerk');
++-------+
+| ENAME |
++-------+
+| Smith |
++-------+
+1 row in set (0.00 sec)
+mysql> select DNAME from DEPT where DNO=(select DEPTNO from EMP where ENAME='Ford');
++----------+
+| DNAME    |
++----------+
+| Research |
++----------+
+1 row in set (0.00 sec)
+mysql> select DNAME from DEPT where DNO=(select DEPTNO from EMP where SAL=(select max(SAL) from EMP));
++------------+
+| DNAME      |
++------------+
+| Accounting |
++------------+
+1 row in set (0.00 sec)
+mysql> select ENAME from EMP where SAL >(select SAL from EMP where ENAME='Turner');
++-------+
+| ENAME |
++-------+
+| Allen |
+| Jones |
+| Blake |
+| Clark |
+| Scott |
+| King  |
+| Ford  |
++-------+
+7 rows in set (0.00 sec)

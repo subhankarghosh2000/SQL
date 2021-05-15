@@ -1,0 +1,461 @@
+mysql> create table Client_master(
+    -> Client_no varchar(6) primary key,
+    -> Name varchar(20) not null,
+    -> City varchar(15),
+    -> Pincode int(8),
+    -> State varchar(15),
+    -> Bal_due numeric(10,2),
+    -> check (Client_no like 'c%')
+    -> );
+Query OK, 0 rows affected, 1 warning (0.21 sec)
+
+mysql> desc Client_master
+    -> ;
++-----------+---------------+------+-----+---------+-------+
+| Field     | Type          | Null | Key | Default | Extra |
++-----------+---------------+------+-----+---------+-------+
+| Client_no | varchar(6)    | NO   | PRI | NULL    |       |
+| Name      | varchar(20)   | NO   |     | NULL    |       |
+| City      | varchar(15)   | YES  |     | NULL    |       |
+| Pincode   | int           | YES  |     | NULL    |       |
+| State     | varchar(15)   | YES  |     | NULL    |       |
+| Bal_due   | decimal(10,2) | YES  |     | NULL    |       |
++-----------+---------------+------+-----+---------+-------+
+6 rows in set (0.04 sec)
+mysql> create table product_master(
+    -> Product_no varchar(6) primary key,
+    -> Description varchar(15) not null,
+    -> Profit_percent numeric(4,2) not null,
+    -> Unit_measure varchar(10) not null,
+    -> Qty_on_hand int(8) not null,
+    -> Recorder_lvl int(8) not null,
+    -> Sell_price numeric(8,2) not null,
+    -> Cost_price numeric(8,2) not null,
+    -> check (Product_no like 'p%'),
+    -> check (Sell_price <> 0),
+    -> check (Cost_price <> 0)
+    -> );
+Query OK, 0 rows affected, 2 warnings (0.03 sec)
+
+mysql> desc product_master;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| Product_no     | varchar(6)   | NO   | PRI | NULL    |       |
+| Description    | varchar(15)  | NO   |     | NULL    |       |
+| Profit_percent | decimal(4,2) | NO   |     | NULL    |       |
+| Unit_measure   | varchar(10)  | NO   |     | NULL    |       |
+| Qty_on_hand    | int          | NO   |     | NULL    |       |
+| Recorder_lvl   | int          | NO   |     | NULL    |       |
+| Sell_price     | decimal(8,2) | NO   |     | NULL    |       |
+| Cost_price     | decimal(8,2) | NO   |     | NULL    |       |
++----------------+--------------+------+-----+---------+-------+
+8 rows in set (0.02 sec)
+mysql> create table salesman_master(
+    -> Salesman_no varchar(6) primary key,
+    -> Salesman_name varchar(20) not null,
+    -> Address1 varchar(10) not null,
+    -> Address2 varchar(10),
+    -> City varchar(20),
+    -> Pincode int(7),
+    -> State varchar(20),
+    -> Sal_amt numeric(8,2) not null,
+    -> Tgt_to_get numeric(6,2) not null,
+    -> Ytd_sales numeric(6,2) not null,
+    -> Remarks varchar(20),
+    -> check (Salesman_no like 's%'),
+    -> check (Sal_amt <> 0),
+    -> check (Tgt_to_get <> 0)
+    -> );
+Query OK, 0 rows affected, 1 warning (0.04 sec)
+
+mysql> desc salesman_master;
++---------------+--------------+------+-----+---------+-------+
+| Field         | Type         | Null | Key | Default | Extra |
++---------------+--------------+------+-----+---------+-------+
+| Salesman_no   | varchar(6)   | NO   | PRI | NULL    |       |
+| Salesman_name | varchar(20)  | NO   |     | NULL    |       |
+| Address1      | varchar(10)  | NO   |     | NULL    |       |
+| Address2      | varchar(10)  | YES  |     | NULL    |       |
+| City          | varchar(20)  | YES  |     | NULL    |       |
+| Pincode       | int          | YES  |     | NULL    |       |
+| State         | varchar(20)  | YES  |     | NULL    |       |
+| Sal_amt       | decimal(8,2) | NO   |     | NULL    |       |
+| Tgt_to_get    | decimal(6,2) | NO   |     | NULL    |       |
+| Ytd_sales     | decimal(6,2) | NO   |     | NULL    |       |
+| Remarks       | varchar(20)  | YES  |     | NULL    |       |
++---------------+--------------+------+-----+---------+-------+
+11 rows in set (0.02 sec)
+mysql> create table sales_order(
+    -> Order_no varchar(6) primary key,
+    -> Order_date date,
+    -> Client_no varchar(6) references Client_master(Client_no),
+    -> Dely_address varchar(25),
+    -> Salesman_no varchar(6) references salesman_master(Salesman_no),
+    -> Dely_type char(1) default 'F',
+    -> Billed_yn char(1),
+    -> Dely_date date,
+    -> Order_status varchar(10),
+    -> check (Order_no like 'O%'),
+    -> check (Dely_type = 'P' or Dely_type = 'F'),
+    -> check (Dely_date >= order_date),
+    -> check (Order_status in ('in process','fulfilled','backorder','cancelled'))
+    -> );
+Query OK, 0 rows affected (0.12 sec)
+
+mysql> desc sales_order;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| Order_no     | varchar(6)  | NO   | PRI | NULL    |       |
+| Order_date   | date        | YES  |     | NULL    |       |
+| Client_no    | varchar(6)  | YES  |     | NULL    |       |
+| Dely_address | varchar(25) | YES  |     | NULL    |       |
+| Salesman_no  | varchar(6)  | YES  |     | NULL    |       |
+| Dely_type    | char(1)     | YES  |     | F       |       |
+| Billed_yn    | char(1)     | YES  |     | NULL    |       |
+| Dely_date    | date        | YES  |     | NULL    |       |
+| Order_status | varchar(10) | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+9 rows in set (0.01 sec)
+mysql> create table sales_order_details(
+    -> Order_no varchar(6),
+    -> Product_no varchar(6),
+    -> Qty_ordered int(8),
+    -> Qty_Disp int(8),
+    -> Product_rate numeric(10,2),
+    -> primary key (Order_no,Product_no),
+    -> foreign key (Order_no) references sales_order(Order_no),
+    -> foreign key (Product_no) references product_master(Product_no)
+    -> );
+Query OK, 0 rows affected, 2 warnings (0.05 sec)
+
+mysql> desc sales_order_details;
++--------------+---------------+------+-----+---------+-------+
+| Field        | Type          | Null | Key | Default | Extra |
++--------------+---------------+------+-----+---------+-------+
+| Order_no     | varchar(6)    | NO   | PRI | NULL    |       |
+| Product_no   | varchar(6)    | NO   | PRI | NULL    |       |
+| Qty_ordered  | int           | YES  |     | NULL    |       |
+| Qty_Disp     | int           | YES  |     | NULL    |       |
+| Product_rate | decimal(10,2) | YES  |     | NULL    |       |
++--------------+---------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+mysql> insert into Client_master values('C00001','Ivan Bayross','Mumbai',400054,'Maharashtra',15000);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Client_master values('C00002','Mamta Mazumdar','Madras',780001,'Tamil Nadu',0);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Client_master values('C00003','Chhaya Bankar','Mumbai',400057,'Maharashtra',5000);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Client_master values('C00004','Ashwini Joshi','Bangalore',560001,'Karnataka',0);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Client_master values('C00005','Hansel Colaco','Mumbai',400060,'Maharashtra',2000);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Client_master values('C00006','Deepak Sharma','Mangalore',560050,'Karnataka',0);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from Client_master;
++-----------+----------------+-----------+---------+-------------+----------+
+| Client_no | Name           | City      | Pincode | State       | Bal_due  |
++-----------+----------------+-----------+---------+-------------+----------+
+| C00001    | Ivan Bayross   | Mumbai    |  400054 | Maharashtra | 15000.00 |
+| C00002    | Mamta Mazumdar | Madras    |  780001 | Tamil Nadu  |     0.00 |
+| C00003    | Chhaya Bankar  | Mumbai    |  400057 | Maharashtra |  5000.00 |
+| C00004    | Ashwini Joshi  | Bangalore |  560001 | Karnataka   |     0.00 |
+| C00005    | Hansel Colaco  | Mumbai    |  400060 | Maharashtra |  2000.00 |
+| C00006    | Deepak Sharma  | Mangalore |  560050 | Karnataka   |     0.00 |
++-----------+----------------+-----------+---------+-------------+----------+
+6 rows in set (0.00 sec)
+mysql> insert into product_master values('P00001','T-Shirts',5,'Piece',200,50,350,250);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into product_master values('P0345','Shirts',6,'Piece',150,50,500,350);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into product_master values('P06734','Cotton Jeans',5,'Piece',100,20,600,450);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into product_master values('P07865','Jeans',5,'Piece',100,20,750,500);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into product_master values('P07868','Trousers',2,'Piece',150,50,850,550);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into product_master values('P07885','PuM-Overs',2.5,'Piece',80,30,700,450);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into product_master values('P07965','Denim Shirts',4,'Piece',100,40,350,250);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into product_master values('P07975','Lyers Top',5,'Piece',70,30,300,175);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into product_master values('P08865','Skirts',5,'Piece',75,30,450,300);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from product_master;
++------------+--------------+----------------+--------------+-------------+--------------+------------+------------+
+| Product_no | Description  | Profit_percent | Unit_measure | Qty_on_hand | Recorder_lvl | Sell_price | Cost_price |
++------------+--------------+----------------+--------------+-------------+--------------+------------+------------+
+| P00001     | T-Shirts     |           5.00 | Piece        |         200 |           50 |     350.00 |     250.00 |
+| P0345      | Shirts       |           6.00 | Piece        |         150 |           50 |     500.00 |     350.00 |
+| P06734     | Cotton Jeans |           5.00 | Piece        |         100 |           20 |     600.00 |     450.00 |
+| P07865     | Jeans        |           5.00 | Piece        |         100 |           20 |     750.00 |     500.00 |
+| P07868     | Trousers     |           2.00 | Piece        |         150 |           50 |     850.00 |     550.00 |
+| P07885     | PuM-Overs    |           2.50 | Piece        |          80 |           30 |     700.00 |     450.00 |
+| P07965     | Denim Shirts |           4.00 | Piece        |         100 |           40 |     350.00 |     250.00 |
+| P07975     | Lyers Top    |           5.00 | Piece        |          70 |           30 |     300.00 |     175.00 |
+| P08865     | Skirts       |           5.00 | Piece        |          75 |           30 |     450.00 |     300.00 |
++------------+--------------+----------------+--------------+-------------+--------------+------------+------------+
+9 rows in set (0.01 sec)
+mysql> insert into salesman_master values('S00001','Aman','A/14','Worli','Mumbai',400002,'Maharashtra');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> insert into salesman_master values('S00001','Aman','A/14','Worli','Mumbai',400002,'Maharashtra',3000,100,50,'Good');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into salesman_master values('S00002','Omkar','65','Nariman','Mumbai',400001,'Maharashtra',3000,200,100,'Good');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into salesman_master values('S00003','Raj','P-7','Bandra','Mumbai',400032,'Maharashtra',3000,200,100,'Good');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into salesman_master values('S00004','Ashish','A/5','Juhu','Mumbai',400044,'Maharashtra',3500,200,150,'Good');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from salesman_master;
++-------------+---------------+----------+----------+--------+---------+-------------+---------+------------+-----------+---------+
+| Salesman_no | Salesman_name | Address1 | Address2 | City   | Pincode | State       | Sal_amt | Tgt_to_get | Ytd_sales | Remarks |
++-------------+---------------+----------+----------+--------+---------+-------------+---------+------------+-----------+---------+
+| S00001      | Aman          | A/14     | Worli    | Mumbai |  400002 | Maharashtra | 3000.00 |     100.00 |     50.00 | Good    |
+| S00002      | Omkar         | 65       | Nariman  | Mumbai |  400001 | Maharashtra | 3000.00 |     200.00 |    100.00 | Good    |
+| S00003      | Raj           | P-7      | Bandra   | Mumbai |  400032 | Maharashtra | 3000.00 |     200.00 |    100.00 | Good    |
+| S00004      | Ashish        | A/5      | Juhu     | Mumbai |  400044 | Maharashtra | 3500.00 |     200.00 |    150.00 | Good    |
++-------------+---------------+----------+----------+--------+---------+-------------+---------+------------+-----------+---------+
+4 rows in set (0.00 sec)
+ insert into sales_order values('O19001','2002-07-20','C00001',NULL,'S00001','F','N','2004-06-12','in process');
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into sales_order values('O19002','2002-06-27','C00002',NULL,'S00002','P','N','2004-06-25','cancelled');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into sales_order values('O46865','2002-02-20','C00003',NULL,'S00003','F','Y','2004-02-18','fulfilled');
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into sales_order values('O19003','2002-04-07','C00001',NULL,'S00001','F','Y','2004-04-03','fulfilled');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order values('O46866','2002-05-22','C00004',NULL,'S00002','P','N','2004-05-20','cancelled');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order values('O19008','2002-07-26','C00005',NULL,'S00004','F','N','2004-05-24','in process');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from sales_order;
++----------+------------+-----------+--------------+-------------+-----------+-----------+------------+--------------+
+| Order_no | Order_date | Client_no | Dely_address | Salesman_no | Dely_type | Billed_yn | Dely_date  | Order_status |
++----------+------------+-----------+--------------+-------------+-----------+-----------+------------+--------------+
+| O19001   | 2002-07-20 | C00001    | NULL         | S00001      | F         | N         | 2004-06-12 | in process   |
+| O19002   | 2002-06-27 | C00002    | NULL         | S00002      | P         | N         | 2004-06-25 | cancelled    |
+| O19003   | 2002-04-07 | C00001    | NULL         | S00001      | F         | Y         | 2004-04-03 | fulfilled    |
+| O19008   | 2002-07-26 | C00005    | NULL         | S00004      | F         | N         | 2004-05-24 | in process   |
+| O46865   | 2002-02-20 | C00003    | NULL         | S00003      | F         | Y         | 2004-02-18 | fulfilled    |
+| O46866   | 2002-05-22 | C00004    | NULL         | S00002      | P         | N         | 2004-05-20 | cancelled    |
++----------+------------+-----------+--------------+-------------+-----------+-----------+------------+--------------+
+6 rows in set (0.01 sec)
+mysql> insert into sales_order_details values('O19001','P00001',4,4,525);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order_details values('O19001','P07965',2,1,8400);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order_details values('O19001','P07885',2,1,5250);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order_details values('O19002','P00001',10,0,525);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order_details values('O46865','P07868',3,3,3150);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order_details values('O46865','P07885',3,1,5250);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order_details values('O46865','P00001',10,10,525);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order_details values('O46865','P0345',4,4,1050);
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into sales_order_details values('O19003','P0345',2,2,1050);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order_details values('O19003','P06734',1,1,12000);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order_details values('O46866','P07965',1,0,8400);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order_details values('O46866','P07975',1,0,1050);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into sales_order_details values('O19008','P00001',10,5,525);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into sales_order_details values('O19008','P07975',5,3,1050);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from sales_order_details;
++----------+------------+-------------+----------+--------------+
+| Order_no | Product_no | Qty_ordered | Qty_Disp | Product_rate |
++----------+------------+-------------+----------+--------------+
+| O19001   | P00001     |           4 |        4 |       525.00 |
+| O19001   | P07885     |           2 |        1 |      5250.00 |
+| O19001   | P07965     |           2 |        1 |      8400.00 |
+| O19002   | P00001     |          10 |        0 |       525.00 |
+| O19003   | P0345      |           2 |        2 |      1050.00 |
+| O19003   | P06734     |           1 |        1 |     12000.00 |
+| O19008   | P00001     |          10 |        5 |       525.00 |
+| O19008   | P07975     |           5 |        3 |      1050.00 |
+| O46865   | P00001     |          10 |       10 |       525.00 |
+| O46865   | P0345      |           4 |        4 |      1050.00 |
+| O46865   | P07868     |           3 |        3 |      3150.00 |
+| O46865   | P07885     |           3 |        1 |      5250.00 |
+| O46866   | P07965     |           1 |        0 |      8400.00 |
+| O46866   | P07975     |           1 |        0 |      1050.00 |
++----------+------------+-------------+----------+--------------+
+14 rows in set (0.00 sec)
+mysql> select * from Client_master where Name like '_a%';
++-----------+----------------+--------+---------+-------------+---------+
+| Client_no | Name           | City   | Pincode | State       | Bal_due |
++-----------+----------------+--------+---------+-------------+---------+
+| C00002    | Mamta Mazumdar | Madras |  780001 | Tamil Nadu  |    0.00 |
+| C00005    | Hansel Colaco  | Mumbai |  400060 | Maharashtra | 2000.00 |
++-----------+----------------+--------+---------+-------------+---------+
+2 rows in set (0.02 sec)
+mysql> select * from Client_master where City like '_a%';
++-----------+----------------+-----------+---------+------------+---------+
+| Client_no | Name           | City      | Pincode | State      | Bal_due |
++-----------+----------------+-----------+---------+------------+---------+
+| C00002    | Mamta Mazumdar | Madras    |  780001 | Tamil Nadu |    0.00 |
+| C00004    | Ashwini Joshi  | Bangalore |  560001 | Karnataka  |    0.00 |
+| C00006    | Deepak Sharma  | Mangalore |  560050 | Karnataka  |    0.00 |
++-----------+----------------+-----------+---------+------------+---------+
+3 rows in set (0.01 sec)
+mysql> select * from Client_master where City in ('Mumbai','Delhi');
++-----------+---------------+--------+---------+-------------+----------+
+| Client_no | Name          | City   | Pincode | State       | Bal_due  |
++-----------+---------------+--------+---------+-------------+----------+
+| C00001    | Ivan Bayross  | Mumbai |  400054 | Maharashtra | 15000.00 |
+| C00003    | Chhaya Bankar | Mumbai |  400057 | Maharashtra |  5000.00 |
+| C00005    | Hansel Colaco | Mumbai |  400060 | Maharashtra |  2000.00 |
++-----------+---------------+--------+---------+-------------+----------+
+3 rows in set (0.00 sec)
+mysql> select * from Client_master where Bal_due > 10000;
++-----------+--------------+--------+---------+-------------+----------+
+| Client_no | Name         | City   | Pincode | State       | Bal_due  |
++-----------+--------------+--------+---------+-------------+----------+
+| C00001    | Ivan Bayross | Mumbai |  400054 | Maharashtra | 15000.00 |
++-----------+--------------+--------+---------+-------------+----------+
+1 row in set (0.01 sec)
+mysql> select * from sales_order where (select extract(month from Order_date))=01;
+Empty set (0.00 sec)
+mysql> select * from sales_order where Client_no in ('C00001','C00002');
++----------+------------+-----------+--------------+-------------+-----------+-----------+------------+--------------+
+| Order_no | Order_date | Client_no | Dely_address | Salesman_no | Dely_type | Billed_yn | Dely_date  | Order_status |
++----------+------------+-----------+--------------+-------------+-----------+-----------+------------+--------------+
+| O19001   | 2002-07-20 | C00001    | NULL         | S00001      | F         | N         | 2004-06-12 | in process   |
+| O19002   | 2002-06-27 | C00002    | NULL         | S00002      | P         | N         | 2004-06-25 | cancelled    |
+| O19003   | 2002-04-07 | C00001    | NULL         | S00001      | F         | Y         | 2004-04-03 | fulfilled    |
++----------+------------+-----------+--------------+-------------+-----------+-----------+------------+--------------+
+3 rows in set (0.00 sec)
+mysql> select * from product_master where Sell_price > 2000 and Sell_price <= 5000;
+Empty set (0.01 sec)
+mysql> select * from product_master where Sell_price > 200 and Sell_price <= 500;
++------------+--------------+----------------+--------------+-------------+--------------+------------+------------+
+| Product_no | Description  | Profit_percent | Unit_measure | Qty_on_hand | Recorder_lvl | Sell_price | Cost_price |
++------------+--------------+----------------+--------------+-------------+--------------+------------+------------+
+| P00001     | T-Shirts     |           5.00 | Piece        |         200 |           50 |     350.00 |     250.00 |
+| P0345      | Shirts       |           6.00 | Piece        |         150 |           50 |     500.00 |     350.00 |
+| P07965     | Denim Shirts |           4.00 | Piece        |         100 |           40 |     350.00 |     250.00 |
+| P07975     | Lyers Top    |           5.00 | Piece        |          70 |           30 |     300.00 |     175.00 |
+| P08865     | Skirts       |           5.00 | Piece        |          75 |           30 |     450.00 |     300.00 |
++------------+--------------+----------------+--------------+-------------+--------------+------------+------------+
+5 rows in set (0.00 sec)
+mysql> select Description, Sell_price*0.15 'new_price'from product_master where Sell_price > 150;
++--------------+-----------+
+| Description  | new_price |
++--------------+-----------+
+| T-Shirts     |   52.5000 |
+| Shirts       |   75.0000 |
+| Cotton Jeans |   90.0000 |
+| Jeans        |  112.5000 |
+| Trousers     |  127.5000 |
+| PuM-Overs    |  105.0000 |
+| Denim Shirts |   52.5000 |
+| Lyers Top    |   45.0000 |
+| Skirts       |   67.5000 |
++--------------+-----------+
+9 rows in set (0.00 sec)
+mysql> select Name,City,State from Client_master where state <> 'Maharashtra';
++----------------+-----------+------------+
+| Name           | City      | State      |
++----------------+-----------+------------+
+| Mamta Mazumdar | Madras    | Tamil Nadu |
+| Ashwini Joshi  | Bangalore | Karnataka  |
+| Deepak Sharma  | Mangalore | Karnataka  |
++----------------+-----------+------------+
+3 rows in set (0.00 sec)
+mysql> select count(*) from sales_order;
++----------+
+| count(*) |
++----------+
+|        6 |
++----------+
+1 row in set (0.02 sec)
+
+mysql> select count(*) count_order from sales_order;
++-------------+
+| count_order |
++-------------+
+|           6 |
++-------------+
+1 row in set (0.00 sec)
+mysql> select avg(Sell_price) average_price from product_master;
++---------------+
+| average_price |
++---------------+
+|    538.888889 |
++---------------+
+1 row in set (0.01 sec)
+mysql> select max(Sell_price) max_price, min(Sell_price) min_price from product_master;
++-----------+-----------+
+| max_price | min_price |
++-----------+-----------+
+|    850.00 |    300.00 |
++-----------+-----------+
+1 row in set (0.01 sec)
+mysql> select count(*) from product_master where Sell_price >= 1500;
++----------+
+| count(*) |
++----------+
+|        0 |
++----------+
+1 row in set (0.00 sec)
+mysql> select * from product_master where Qty_on_hand < Recorder_lvl;
+Empty set (0.00 sec)
+mysql> select Order_no,Order_date from sales_order;
++----------+------------+
+| Order_no | Order_date |
++----------+------------+
+| O19001   | 2002-07-20 |
+| O19002   | 2002-06-27 |
+| O19003   | 2002-04-07 |
+| O19008   | 2002-07-26 |
+| O46865   | 2002-02-20 |
+| O46866   | 2002-05-22 |
++----------+------------+
+6 rows in set (0.00 sec)
+
+

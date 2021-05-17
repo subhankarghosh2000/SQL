@@ -1,0 +1,336 @@
+mysql> use subhankar;
+Database changed
+mysql> create table zipcodes(
+    -> zip numeric(5,0),
+    -> city varchar(30),
+    -> primary key(zip));
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> desc zipcodes;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| zip   | decimal(5,0) | NO   | PRI | NULL    |       |
+| city  | varchar(30)  | YES  |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+2 rows in set (0.03 sec)
+
+mysql> create table employees(
+    -> eno numeric(4,0) not null primary key,
+    -> ename varchar(30),
+    -> zip numeric(5,0) references zipcodes,
+    -> hdate date);
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc employees;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| eno   | decimal(4,0) | NO   | PRI | NULL    |       |
+| ename | varchar(30)  | YES  |     | NULL    |       |
+| zip   | decimal(5,0) | YES  |     | NULL    |       |
+| hdate | date         | YES  |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+
+mysql> create table parts(
+    -> pno numeric(5,0) not null primary key,
+    -> pname varchar(30),
+    -> qoh int check(qoh>=0),
+    -> price numeric(9,2) check(price>=0.0),
+    -> level int);
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc parts;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| pno   | decimal(5,0) | NO   | PRI | NULL    |       |
+| pname | varchar(30)  | YES  |     | NULL    |       |
+| qoh   | int          | YES  |     | NULL    |       |
+| price | decimal(9,2) | YES  |     | NULL    |       |
+| level | int          | YES  |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+mysql> create table customers(
+    -> cno numeric(5,0) not null primary key,
+    -> cname varchar(30),
+    -> street varchar(30),
+    -> zip numeric(5,0) references zipcodes,
+    -> phone char(12));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> desc customers;
++--------+--------------+------+-----+---------+-------+
+| Field  | Type         | Null | Key | Default | Extra |
++--------+--------------+------+-----+---------+-------+
+| cno    | decimal(5,0) | NO   | PRI | NULL    |       |
+| cname  | varchar(30)  | YES  |     | NULL    |       |
+| street | varchar(30)  | YES  |     | NULL    |       |
+| zip    | decimal(5,0) | YES  |     | NULL    |       |
+| phone  | char(12)     | YES  |     | NULL    |       |
++--------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> create table orders(
+    -> ono numeric(5,0) not null primary key,
+    -> cno numeric(5,0) references customers,
+    -> eno numeric(4,0) references employees,
+    -> received date,
+    -> shipped date);
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc orders;
++----------+--------------+------+-----+---------+-------+
+| Field    | Type         | Null | Key | Default | Extra |
++----------+--------------+------+-----+---------+-------+
+| ono      | decimal(5,0) | NO   | PRI | NULL    |       |
+| cno      | decimal(5,0) | YES  |     | NULL    |       |
+| eno      | decimal(4,0) | YES  |     | NULL    |       |
+| received | date         | YES  |     | NULL    |       |
+| shipped  | date         | YES  |     | NULL    |       |
++----------+--------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+mysql> create table odetails(
+    -> ono numeric(5,0) not null references orders,
+    -> pno numeric(5,0) not null references parts,
+    -> qty int check(qty>0),
+    -> primary key (ono,pno));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> desc odetails;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| ono   | decimal(5,0) | NO   | PRI | NULL    |       |
+| pno   | decimal(5,0) | NO   | PRI | NULL    |       |
+| qty   | int          | YES  |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+mysql> insert into zipcodes values(52637,"Mumbai");
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into zipcodes values(53562,"Delhi");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into zipcodes values(53598,"Kolkata");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into zipcodes values(53599,"Mumbai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from zipcodes;
++-------+---------+
+| zip   | city    |
++-------+---------+
+| 52637 | Mumbai  |
+| 53562 | Delhi   |
+| 53598 | Kolkata |
+| 53599 | Mumbai  |
++-------+---------+
+4 rows in set (0.00 sec)
+mysql> insert into employees values(1000,"Subham",52637,"2001-12-23");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into employees values(1001,"Lewa",52637,"2000-10-13");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into employees values(1002,"Ssawata",53599,"2002-09-10");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into employees values(1003,"Raunak",53599,"2004-08-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from employees;
++------+---------+-------+------------+
+| eno  | ename   | zip   | hdate      |
++------+---------+-------+------------+
+| 1000 | Subham  | 52637 | 2001-12-23 |
+| 1001 | Lewa    | 52637 | 2000-10-13 |
+| 1002 | Ssawata | 53599 | 2002-09-10 |
+| 1003 | Raunak  | 53599 | 2004-08-12 |
++------+---------+-------+------------+
+4 rows in set (0.00 sec)
+mysql> insert into parts values(10601,"Land before time I",200,19.99,20);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into parts values(10602,"Land before time II",300,19.99,20);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into parts values(10603,"Land before time III",300,20001,30);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into parts values(10604,"Land before time IV",100,30000,30);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from parts;
++-------+----------------------+------+----------+-------+
+| pno   | pname                | qoh  | price    | level |
++-------+----------------------+------+----------+-------+
+| 10601 | Land before time I   |  200 |    19.99 |    20 |
+| 10602 | Land before time II  |  300 |    19.99 |    20 |
+| 10603 | Land before time III |  300 | 20001.00 |    30 |
+| 10604 | Land before time IV  |  100 | 30000.00 |    30 |
++-------+----------------------+------+----------+-------+
+4 rows in set (0.00 sec)
+mysql> insert into customers values(30000,"Carlos","Bidhannagar",52637,"316-636-5555");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customers values(30001,"Fermino","Maniktala",53599,"316-389-5555");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customers values(30002,"Silva","Ashutosh",53598,"312-473-5555");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customers values(30003,"David","Vivekananda",53562,"312-485-5555");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from customers;
++-------+---------+-------------+-------+--------------+
+| cno   | cname   | street      | zip   | phone        |
++-------+---------+-------------+-------+--------------+
+| 30000 | Carlos  | Bidhannagar | 52637 | 316-636-5555 |
+| 30001 | Fermino | Maniktala   | 53599 | 316-389-5555 |
+| 30002 | Silva   | Ashutosh    | 53598 | 312-473-5555 |
+| 30003 | David   | Vivekananda | 53562 | 312-485-5555 |
++-------+---------+-------------+-------+--------------+
+4 rows in set (0.00 sec)
+mysql> insert into orders values(40000,30002,1000,"2000-09-12","2000-08-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orders values(40001,30000,1001,"2000-08-12","2000-07-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orders values(40002,30003,1002,"2000-07-12","2000-06-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orders values(40003,30001,1003,"2000-06-12","2000-05-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orders values(40004,30002,1001,"2000-06-11",null);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orders values(40005,30001,1002,"2005-01-11",null);
+Query OK, 1 row affected (0.01 sec)
+
+
+mysql> insert into odetails values(40000,10601,4000);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into odetails values(40001,10601,400000);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into odetails values(40002,10601,40);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into odetails values(40002,10602,50);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from orders;
++-------+-------+------+------------+------------+
+| ono   | cno   | eno  | received   | shipped    |
++-------+-------+------+------------+------------+
+| 40000 | 30002 | 1000 | 2000-09-12 | 2000-08-12 |
+| 40001 | 30000 | 1001 | 2000-08-12 | 2000-07-12 |
+| 40002 | 30003 | 1002 | 2000-07-12 | 2000-06-12 |
+| 40003 | 30001 | 1003 | 2000-06-12 | 2000-05-12 |
+| 40004 | 30002 | 1001 | 2000-06-11 | NULL       |
+| 40005 | 30001 | 1002 | 2005-01-11 | NULL       |
++-------+-------+------+------------+------------+
+6 rows in set (0.00 sec)
+mysql> select * from odetails;
++-------+-------+--------+
+| ono   | pno   | qty    |
++-------+-------+--------+
+| 40000 | 10601 |   4000 |
+| 40001 | 10601 | 400000 |
+| 40002 | 10601 |     40 |
+| 40002 | 10602 |     50 |
++-------+-------+--------+
+4 rows in set (0.00 sec)
+mysql> select pno,pname from parts where price < 20.00;
++-------+---------------------+
+| pno   | pname               |
++-------+---------------------+
+| 10601 | Land before time I  |
+| 10602 | Land before time II |
++-------+---------------------+
+2 rows in set (0.01 sec)
+mysql> select pno from parts where pno in(select pno from odetails);
++-------+
+| pno   |
++-------+
+| 10601 |
+| 10602 |
++-------+
+2 rows in set (0.01 sec)
+mysql> select * from customers where cname like 'S%';
++-------+-------+----------+-------+--------------+
+| cno   | cname | street   | zip   | phone        |
++-------+-------+----------+-------+--------------+
+| 30002 | Silva | Ashutosh | 53598 | 312-473-5555 |
++-------+-------+----------+-------+--------------+
+1 row in set (0.01 sec)
+mysql> select o.ono,c.cname from orders o left join customers c on o.cno=c.cno where o.shipped is null;
++-------+---------+
+| ono   | cname   |
++-------+---------+
+| 40004 | Silva   |
+| 40005 | Fermino |
++-------+---------+
+2 rows in set (0.00 sec)
+mysql> select customers.cname,employees.ename from customers inner join orders on customers.cno=orders.cno inner join employees on orders.eno=employees.eno;
++---------+---------+
+| cname   | ename   |
++---------+---------+
+| Silva   | Subham  |
+| Carlos  | Lewa    |
+| David   | Ssawata |
+| Fermino | Raunak  |
+| Silva   | Lewa    |
+| Fermino | Ssawata |
++---------+---------+
+6 rows in set (0.01 sec)
+mysql> select ename from employees where hdate=(select min(hdate) from employees);
++-------+
+| ename |
++-------+
+| Lewa  |
++-------+
+1 row in set (0.01 sec)
+mysql> select pno,pname,price from parts where price>20000 order by pno;
++-------+----------------------+----------+
+| pno   | pname                | price    |
++-------+----------------------+----------+
+| 10603 | Land before time III | 20001.00 |
+| 10604 | Land before time IV  | 30000.00 |
++-------+----------------------+----------+
+2 rows in set (0.00 sec)
+mysql> select parts.pno,parts.pname,sum(odetails.qty)* parts.price from odetails inner join parts on odetails.pno=parts.pno group by parts.pno;
++-------+---------------------+--------------------------------+
+| pno   | pname               | sum(odetails.qty)* parts.price |
++-------+---------------------+--------------------------------+
+| 10601 | Land before time I  |                     8076759.60 |
+| 10602 | Land before time II |                         999.50 |
++-------+---------------------+--------------------------------+
+2 rows in set (0.01 sec)
+mysql> select sum(qty) from odetails where pno=10601;
++----------+
+| sum(qty) |
++----------+
+|   404040 |
++----------+
+1 row in set (0.01 sec)
+
+mysql> select distinct eno from employees where zip in(select zip from zipcodes where city="Mumbai");
++------+
+| eno  |
++------+
+| 1000 |
+| 1001 |
+| 1002 |
+| 1003 |
++------+
+4 rows in set (0.01 sec)

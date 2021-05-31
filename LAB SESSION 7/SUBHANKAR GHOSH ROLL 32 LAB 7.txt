@@ -1,0 +1,590 @@
+mysql> use subhankar;
+Database changed
+mysql> create table ACTOR(
+    -> act_id int primary key,
+    -> act_name varchar(100),
+    -> act_gender varchar(10)
+    -> );
+Query OK, 0 rows affected (0.19 sec)
+
+mysql> desc ACTOR;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| act_id     | int          | NO   | PRI | NULL    |       |
+| act_name   | varchar(100) | YES  |     | NULL    |       |
+| act_gender | varchar(10)  | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+3 rows in set (0.04 sec)
+
+mysql> create table DIRECTOR(
+    -> dir_id int primary key,
+    -> dir_name varchar(200),
+    -> dir_phone varchar(100)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> desc DIRECTOR;
++-----------+--------------+------+-----+---------+-------+
+| Field     | Type         | Null | Key | Default | Extra |
++-----------+--------------+------+-----+---------+-------+
+| dir_id    | int          | NO   | PRI | NULL    |       |
+| dir_name  | varchar(200) | YES  |     | NULL    |       |
+| dir_phone | varchar(100) | YES  |     | NULL    |       |
++-----------+--------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+mysql> create table MOVIES(
+    -> mov_id int primary key,
+    -> mov_title varchar(210),
+    -> mov_year year,
+    -> mov_lang varchar(100),
+    -> dir_id int references DIRECTOR(dir_id)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> desc MOVIES;
++-----------+--------------+------+-----+---------+-------+
+| Field     | Type         | Null | Key | Default | Extra |
++-----------+--------------+------+-----+---------+-------+
+| mov_id    | int          | NO   | PRI | NULL    |       |
+| mov_title | varchar(210) | YES  |     | NULL    |       |
+| mov_year  | year         | YES  |     | NULL    |       |
+| mov_lang  | varchar(100) | YES  |     | NULL    |       |
+| dir_id    | int          | YES  |     | NULL    |       |
++-----------+--------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+mysql> create table MOVIE_CAST(
+    -> act_id int references ACTOR(act_id),
+    -> mov_id int references MOVIES(mov_id),
+    -> role varchar(110),
+    -> primary key(act_id,mov_id)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> desc MOVIE_CAST;
++--------+--------------+------+-----+---------+-------+
+| Field  | Type         | Null | Key | Default | Extra |
++--------+--------------+------+-----+---------+-------+
+| act_id | int          | NO   | PRI | NULL    |       |
+| mov_id | int          | NO   | PRI | NULL    |       |
+| role   | varchar(110) | YES  |     | NULL    |       |
++--------+--------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+mysql> create table RATING(
+    -> mov_id int primary key references MOVIES(mov_id),
+    -> rev_stars int
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> desc RATING;
++-----------+------+------+-----+---------+-------+
+| Field     | Type | Null | Key | Default | Extra |
++-----------+------+------+-----+---------+-------+
+| mov_id    | int  | NO   | PRI | NULL    |       |
+| rev_stars | int  | YES  |     | NULL    |       |
++-----------+------+------+-----+---------+-------+
+2 rows in set (0.01 sec)
+mysql> insert into ACTOR values(1001,'Vin Diesel','M');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into ACTOR values(1002,'Dwayne Johnson','M');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into ACTOR values(1003,'Edward Norton','M');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into ACTOR values(1004,'Benedict Cumberbatch','M');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into ACTOR values(1005,'Olivia Wilde','F');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into ACTOR values(1006,'Saoirse Ronan','F');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from ACTOR;
++--------+----------------------+------------+
+| act_id | act_name             | act_gender |
++--------+----------------------+------------+
+|   1001 | Vin Diesel           | M          |
+|   1002 | Dwayne Johnson       | M          |
+|   1003 | Edward Norton        | M          |
+|   1004 | Benedict Cumberbatch | M          |
+|   1005 | Olivia Wilde         | F          |
+|   1006 | Saoirse Ronan        | F          |
++--------+----------------------+------------+
+6 rows in set (0.01 sec)
+
+mysql> insert into DIRECTOR values(2001,'Hitchcock',9862846104);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into DIRECTOR values(2002,'Tom Jones',9862846404);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into DIRECTOR values(2003,'Steven Spielberg',9861846404);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into DIRECTOR values(2004,'James Cameron',9861845404);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into DIRECTOR values(2005,'Christopher Nolan',9561845404);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into DIRECTOR values(2006,'Tim Burton',9561845474);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into DIRECTOR values(2007,'Steven Spielberg',9628074173);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from DIRECTOR;
++--------+-------------------+------------+
+| dir_id | dir_name          | dir_phone  |
++--------+-------------------+------------+
+|   2001 | Hitchcock         | 9862846104 |
+|   2002 | Tom Jones         | 9862846404 |
+|   2003 | Steven Spielberg  | 9861846404 |
+|   2004 | James Cameron     | 9861845404 |
+|   2005 | Christopher Nolan | 9561845404 |
+|   2006 | Tim Burton        | 9561845474 |
+|   2007 | Steven Spielberg  | 9628074173 |
++--------+-------------------+------------+
+7 rows in set (0.00 sec)
+
+mysql> insert into MOVIES values(101,'Captain America',1999,'English',2001);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIES values(102,'Iron Man',1994,'Spanish',2001);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIES values(103,'Thor',2018,'English',2002);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIES values(104,'Spiderman',2019,'Spanish',2002);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIES values(105,'Wonder Woman',2001,'English',2003);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIES values(106,'Man of Steel',2014,'English',2004);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIES values(107,'Star Wars',2001,'English',2007);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIES values(108,'Avengers',2020,'English',2007);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from MOVIES;
++--------+-----------------+----------+----------+--------+
+| mov_id | mov_title       | mov_year | mov_lang | dir_id |
++--------+-----------------+----------+----------+--------+
+|    101 | Captain America |     1999 | English  |   2001 |
+|    102 | Iron Man        |     1994 | Spanish  |   2001 |
+|    103 | Thor            |     2018 | English  |   2002 |
+|    104 | Spiderman       |     2019 | Spanish  |   2002 |
+|    105 | Wonder Woman    |     2001 | English  |   2003 |
+|    106 | Man of Steel    |     2014 | English  |   2004 |
+|    107 | Star Wars       |     2001 | English  |   2007 |
+|    108 | Avengers        |     2020 | English  |   2007 |
++--------+-----------------+----------+----------+--------+
+8 rows in set (0.00 sec)
+
+mysql> insert into MOVIE_CAST(
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> insert into MOVIE_CAST values(1001,101,'Jack Sparrow');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIE_CAST values(1001,102,'Rocky Balboa');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIE_CAST values(1002,102,'Forest Gump');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIE_CAST values(1002,104,'Don Vito Corleone');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIE_CAST values(1002,106,'Edward Scissorhands');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIE_CAST values(1003,103,'Ellen Ripley');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIE_CAST values(1004,104,'Ron Burgundy');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIE_CAST values(1005,105,'Keven McCallister');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIE_CAST values(1005,106,'John McClane');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into MOVIE_CAST values(1006,105,'Alex Delarge');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from MOVIE_CAST;
++--------+--------+---------------------+
+| act_id | mov_id | role                |
++--------+--------+---------------------+
+|   1001 |    101 | Jack Sparrow        |
+|   1001 |    102 | Rocky Balboa        |
+|   1002 |    102 | Forest Gump         |
+|   1002 |    104 | Don Vito Corleone   |
+|   1002 |    106 | Edward Scissorhands |
+|   1003 |    103 | Ellen Ripley        |
+|   1004 |    104 | Ron Burgundy        |
+|   1005 |    105 | Keven McCallister   |
+|   1005 |    106 | John McClane        |
+|   1006 |    105 | Alex Delarge        |
++--------+--------+---------------------+
+10 rows in set (0.01 sec)
+
+mysql> insert into RATING values(101,4);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into RATING values(102,3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into RATING values(103,5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into RATING values(104,2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into RATING values(105,4);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into RATING values(106,2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into RATING values(107,2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into RATING values(108,9);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from RATING;
++--------+-----------+
+| mov_id | rev_stars |
++--------+-----------+
+|    101 |         4 |
+|    102 |         3 |
+|    103 |         5 |
+|    104 |         2 |
+|    105 |         4 |
+|    106 |         2 |
+|    107 |         2 |
+|    108 |         9 |
++--------+-----------+
+8 rows in set (0.00 sec)
+mysql> select mov_title from MOVIES where dir_id in (select dir_id from DIRECTOR where dir_name='Hitchcock');
++-----------------+
+| mov_title       |
++-----------------+
+| Captain America |
+| Iron Man        |
++-----------------+
+2 rows in set (0.01 sec)
+
+mysql> select distinct m.mov_title,c.act_id from MOVIES m, MOVIE_CAST c where m.mov_id=c.mov_id and c.act_id in(select act_id from MOVIE_CAST group by act_id having count(mov_id)>1);
++-----------------+--------+
+| mov_title       | act_id |
++-----------------+--------+
+| Captain America |   1001 |
+| Iron Man        |   1001 |
+| Iron Man        |   1002 |
+| Spiderman       |   1002 |
+| Man of Steel    |   1002 |
+| Wonder Woman    |   1005 |
+| Man of Steel    |   1005 |
++-----------------+--------+
+7 rows in set (0.01 sec)
+
+mysql> select act_name from ACTOR where act_id in (select a.act_id from (select act_id from MOVIE_CAST natural join MOVIES where mov_year<2000)a inner join (select act_id from MOVIE_CAST natural join MOVIES where mov_year>2015)b on a.act_id=b.act_id);
++----------------+
+| act_name       |
++----------------+
+| Dwayne Johnson |
++----------------+
+1 row in set (0.01 sec)
+
+mysql> select mov_title, max(rev_stars) from MOVIES m,Rating r where m.mov_id=r.mov_id group by m.mov_title having count(r.rev_stars)>0;
++-----------------+----------------+
+| mov_title       | max(rev_stars) |
++-----------------+----------------+
+| Captain America |              4 |
+| Iron Man        |              3 |
+| Thor            |              5 |
+| Spiderman       |              2 |
+| Wonder Woman    |              4 |
+| Man of Steel    |              2 |
++-----------------+----------------+
+6 rows in set (0.00 sec)
+mysql> update RATING set rev_stars=5 where mov_id in (select mov_id from MOVIES m inner join DIRECTOR d on m.dir_id=d.dir_id and d.dir_name='Steven Spielberg');
+Query OK, 3 rows affected (0.01 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+mysql> select * from RATING;
++--------+-----------+
+| mov_id | rev_stars |
++--------+-----------+
+|    101 |         4 |
+|    102 |         3 |
+|    103 |         5 |
+|    104 |         2 |
+|    105 |         5 |
+|    106 |         2 |
+|    107 |         5 |
+|    108 |         5 |
++--------+-----------+
+8 rows in set (0.01 sec)
+
+mysql> create table salesman(
+    -> salesman_id int(5) primary key,
+    -> name varchar(30),
+    -> city varchar(20),
+    -> commission numeric(10,2)
+    -> );
+Query OK, 0 rows affected, 1 warning (0.08 sec)
+
+mysql> desc salesman;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| salesman_id | int           | NO   | PRI | NULL    |       |
+| name        | varchar(30)   | YES  |     | NULL    |       |
+| city        | varchar(20)   | YES  |     | NULL    |       |
+| commission  | decimal(10,2) | YES  |     | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+4 rows in set (0.02 sec)
+
+mysql> create table customer(
+    -> customer_id int(5) primary key,
+    -> customer_name varchar(30),
+    -> city varchar(20),
+    -> grade int(10),
+    -> salesman_id int(10) references salesman(salesman_id) on delete cascade on update cascade
+    -> );
+Query OK, 0 rows affected, 3 warnings (0.03 sec)
+
+mysql> desc customer;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| customer_id   | int         | NO   | PRI | NULL    |       |
+| customer_name | varchar(30) | YES  |     | NULL    |       |
+| city          | varchar(20) | YES  |     | NULL    |       |
+| grade         | int         | YES  |     | NULL    |       |
+| salesman_id   | int         | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+mysql> create table orders1(
+    -> order_no int(5) primary key,
+    -> purchase_amt numeric(10,2),
+    -> ord_date date,
+    -> customer_id int(5) references customer(customer_id) on delete cascade on update cascade,
+    -> salesman_id int(5) references salesman(salesman_id) on delete cascade on update cascade
+    -> );
+Query OK, 0 rows affected, 3 warnings (0.04 sec)
+
+mysql> desc orders1;
++--------------+---------------+------+-----+---------+-------+
+| Field        | Type          | Null | Key | Default | Extra |
++--------------+---------------+------+-----+---------+-------+
+| order_no     | int           | NO   | PRI | NULL    |       |
+| purchase_amt | decimal(10,2) | YES  |     | NULL    |       |
+| ord_date     | date          | YES  |     | NULL    |       |
+| customer_id  | int           | YES  |     | NULL    |       |
+| salesman_id  | int           | YES  |     | NULL    |       |
++--------------+---------------+------+-----+---------+-------+
+5 rows in set (0.02 sec)
+mysql> desc orders1;
++--------------+---------------+------+-----+---------+-------+
+| Field        | Type          | Null | Key | Default | Extra |
++--------------+---------------+------+-----+---------+-------+
+| order_no     | int           | NO   | PRI | NULL    |       |
+| purchase_amt | decimal(10,2) | YES  |     | NULL    |       |
+| ord_date     | date          | YES  |     | NULL    |       |
+| customer_id  | int           | YES  |     | NULL    |       |
+| salesman_id  | int           | YES  |     | NULL    |       |
++--------------+---------------+------+-----+---------+-------+
+5 rows in set (0.02 sec)
+
+mysql> insert into salesman values(100,'Rivaldo','Bangalore',1.2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into salesman values(101,'Alex','Pune',3.2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into salesman values(102,'Torres','Mumbai',1.4);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into salesman values(103,'Kane','Bangalore',2.4);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into salesman values(104,'Kahn','Bangalore',3.2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into salesman values(105,'Cassilas','Pune',3.8);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into salesman values(106,'Ronaldo','Delhi',5.2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into salesman values(107,'Messi','Chennai',6.3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from salesman;
++-------------+----------+-----------+------------+
+| salesman_id | name     | city      | commission |
++-------------+----------+-----------+------------+
+|         100 | Rivaldo  | Bangalore |       1.20 |
+|         101 | Alex     | Pune      |       3.20 |
+|         102 | Torres   | Mumbai    |       1.40 |
+|         103 | Kane     | Bangalore |       2.40 |
+|         104 | Kahn     | Bangalore |       3.20 |
+|         105 | Cassilas | Pune      |       3.80 |
+|         106 | Ronaldo  | Delhi     |       5.20 |
+|         107 | Messi    | Chennai   |       6.30 |
++-------------+----------+-----------+------------+
+8 rows in set (0.00 sec)
+mysql> insert into customer values(1,'Van Dijk','Bangalore',5,100);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values(2,'Deco','Pune',10,105);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values(3,'Guti','Pune',20,106);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values(4,'Cafu','Delhi',10,107);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values(5,'Carlos','Mumbai',15,102);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values(6,'Maldini','Chennai',12,101);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values(7,'Puyol','Bangalore',17,101);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from customer;
++-------------+---------------+-----------+-------+-------------+
+| customer_id | customer_name | city      | grade | salesman_id |
++-------------+---------------+-----------+-------+-------------+
+|           1 | Van Dijk      | Bangalore |     5 |         100 |
+|           2 | Deco          | Pune      |    10 |         105 |
+|           3 | Guti          | Pune      |    20 |         106 |
+|           4 | Cafu          | Delhi     |    10 |         107 |
+|           5 | Carlos        | Mumbai    |    15 |         102 |
+|           6 | Maldini       | Chennai   |    12 |         101 |
+|           7 | Puyol         | Bangalore |    17 |         101 |
++-------------+---------------+-----------+-------+-------------+
+7 rows in set (0.00 sec)
+mysql> insert into orders1 values(1000,270.5,'2017-05-12',1,101);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orders1 values(1001,300,'2017-03-11',2,107);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orders1 values(1002,500,'2017-03-11',5,102);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orders1 values(1003,350.25,'2017-06-08',6,102);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orders1 values(1004,400,'2017-04-25',2,100);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orders1 values(1005,187.34,'2017-07-26',3,105);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from orders1;
++----------+--------------+------------+-------------+-------------+
+| order_no | purchase_amt | ord_date   | customer_id | salesman_id |
++----------+--------------+------------+-------------+-------------+
+|     1000 |       270.50 | 2017-05-12 |           1 |         101 |
+|     1001 |       300.00 | 2017-03-11 |           2 |         107 |
+|     1002 |       500.00 | 2017-03-11 |           5 |         102 |
+|     1003 |       350.25 | 2017-06-08 |           6 |         102 |
+|     1004 |       400.00 | 2017-04-25 |           2 |         100 |
+|     1005 |       187.34 | 2017-07-26 |           3 |         105 |
++----------+--------------+------------+-------------+-------------+
+6 rows in set (0.01 sec)
+mysql> select count(customer_id) from customer where grade>(select avg(grade) from customer where city='Bangalore');
++--------------------+
+| count(customer_id) |
++--------------------+
+|                  4 |
++--------------------+
+1 row in set (0.01 sec)
+
+mysql> select salesman_id,name from salesman where salesman_id in (select s.salesman_id from customer c, salesman s where s.salesman_id=c.salesman_id group by c.salesman_id having count(c.salesman_id)>1);
++-------------+------+
+| salesman_id | name |
++-------------+------+
+|         101 | Alex |
++-------------+------+
+1 row in set (0.01 sec)
+
+mysql> (select distinct s.salesman_id, 'same city' from salesman s, customer c where s.salesman_id=c.salesman_id and s.city=c.city) union (select distinct s.salesman_id, 'diff city' from salesman s, customer c where s.salesman_id=c.salesman_id and s.city!=c.city) union (select distinct s.salesman_id, 'no customer' from salesman s, customer c where s.salesman_id not in (select c.salesman_id from customer c));
++-------------+-------------+
+| salesman_id | same city   |
++-------------+-------------+
+|         100 | same city   |
+|         105 | same city   |
+|         102 | same city   |
+|         106 | diff city   |
+|         107 | diff city   |
+|         101 | diff city   |
+|         103 | no customer |
+|         104 | no customer |
++-------------+-------------+
+8 rows in set (0.01 sec)
+mysql> create view highest_order as select o.ord_date,o.salesman_id,s.name from orders1 o,salesman s where o.purchase_amt=(select max(purchase_amt) from orders  where o.salesman_id=s.salesman_id);
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> select * from highest_order;
++------------+-------------+----------+
+| ord_date   | salesman_id | name     |
++------------+-------------+----------+
+| 2017-04-25 |         100 | Rivaldo  |
+| 2017-05-12 |         101 | Alex     |
+| 2017-06-08 |         102 | Torres   |
+| 2017-03-11 |         102 | Torres   |
+| 2017-07-26 |         105 | Cassilas |
+| 2017-03-11 |         107 | Messi    |
++------------+-------------+----------+
+6 rows in set (0.01 sec)
+
+mysql> delete from salesman where salesman_id=101;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from salesman;
++-------------+----------+-----------+------------+
+| salesman_id | name     | city      | commission |
++-------------+----------+-----------+------------+
+|         100 | Rivaldo  | Bangalore |       1.20 |
+|         102 | Torres   | Mumbai    |       1.40 |
+|         103 | Kane     | Bangalore |       2.40 |
+|         104 | Kahn     | Bangalore |       3.20 |
+|         105 | Cassilas | Pune      |       3.80 |
+|         106 | Ronaldo  | Delhi     |       5.20 |
+|         107 | Messi    | Chennai   |       6.30 |
++-------------+----------+-----------+------------+
+7 rows in set (0.00 sec)
+
+mysql> select * from orders1;
++----------+--------------+------------+-------------+-------------+
+| order_no | purchase_amt | ord_date   | customer_id | salesman_id |
++----------+--------------+------------+-------------+-------------+
+|     1000 |       270.50 | 2017-05-12 |           1 |         101 |
+|     1001 |       300.00 | 2017-03-11 |           2 |         107 |
+|     1002 |       500.00 | 2017-03-11 |           5 |         102 |
+|     1003 |       350.25 | 2017-06-08 |           6 |         102 |
+|     1004 |       400.00 | 2017-04-25 |           2 |         100 |
+|     1005 |       187.34 | 2017-07-26 |           3 |         105 |
++----------+--------------+------------+-------------+-------------+
+6 rows in set (0.00 sec)

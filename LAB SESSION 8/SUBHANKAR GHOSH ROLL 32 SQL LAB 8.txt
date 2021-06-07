@@ -1,0 +1,182 @@
+mysql> create table customers1(
+    -> customerID int not null primary key,
+    -> customerName varchar(25) not null,
+    -> contactName varchar(25) not null,
+    -> address varchar(30) not null,
+    -> city varchar(20) not null,
+    -> postalCode int not null,
+    -> country char(20)
+    -> );
+Query OK, 0 rows affected (0.16 sec)
+
+mysql> desc customers1;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| customerID   | int         | NO   | PRI | NULL    |       |
+| customerName | varchar(25) | NO   |     | NULL    |       |
+| contactName  | varchar(25) | NO   |     | NULL    |       |
+| address      | varchar(30) | NO   |     | NULL    |       |
+| city         | varchar(20) | NO   |     | NULL    |       |
+| postalCode   | int         | NO   |     | NULL    |       |
+| country      | char(20)    | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+7 rows in set (0.05 sec)
+mysql> create table suppliers(
+    -> supplierID int not null primary key,
+    -> supplierName varchar(25),
+    -> contactName varchar(25) not null,
+    -> address varchar(30) not null,
+    -> city varchar(20) not null,
+    -> postalCode int not null,
+    -> country char(20)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> desc suppliers;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| supplierID   | int         | NO   | PRI | NULL    |       |
+| supplierName | varchar(25) | YES  |     | NULL    |       |
+| contactName  | varchar(25) | NO   |     | NULL    |       |
+| address      | varchar(30) | NO   |     | NULL    |       |
+| city         | varchar(20) | NO   |     | NULL    |       |
+| postalCode   | int         | NO   |     | NULL    |       |
+| country      | char(20)    | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+mysql> alter table customers1 modify column postalCode varchar(5);
+Query OK, 3 rows affected (0.10 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> alter table suppliers modify column postalCode varchar(5);
+Query OK, 0 rows affected (0.08 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc customers1;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| customerID   | int         | NO   | PRI | NULL    |       |
+| customerName | varchar(25) | NO   |     | NULL    |       |
+| contactName  | varchar(25) | NO   |     | NULL    |       |
+| address      | varchar(30) | NO   |     | NULL    |       |
+| city         | varchar(20) | NO   |     | NULL    |       |
+| postalCode   | varchar(5)  | YES  |     | NULL    |       |
+| country      | char(20)    | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+
+mysql> desc suppliers;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| supplierID   | int         | NO   | PRI | NULL    |       |
+| supplierName | varchar(25) | YES  |     | NULL    |       |
+| contactName  | varchar(25) | NO   |     | NULL    |       |
+| address      | varchar(30) | NO   |     | NULL    |       |
+| city         | varchar(20) | NO   |     | NULL    |       |
+| postalCode   | varchar(5)  | YES  |     | NULL    |       |
+| country      | char(20)    | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+mysql> insert into customers1 values(1,"AlfredsFutter","Maria Anders","Obere Str.57","Berlin","12209","Germany");
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into customers1 values(2,"Ana helados","Ana Trujillo","Avda. Construction 2222","Mexico D.F","05021","Mexico");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customers1 values(3,"Antonio Moreno","Antonio Moreno","Mataderos 2312","Mexico D.F","05023","Mexico");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from customers1;
++------------+----------------+----------------+-------------------------+------------+------------+---------+
+| customerID | customerName   | contactName    | address                 | city       | postalCode | country |
++------------+----------------+----------------+-------------------------+------------+------------+---------+
+|          1 | AlfredsFutter  | Maria Anders   | Obere Str.57            | Berlin     | 12209      | Germany |
+|          2 | Ana helados    | Ana Trujillo   | Avda. Construction 2222 | Mexico D.F | 05021      | Mexico  |
+|          3 | Antonio Moreno | Antonio Moreno | Mataderos 2312          | Mexico D.F | 05023      | Mexico  |
++------------+----------------+----------------+-------------------------+------------+------------+---------+
+3 rows in set (0.00 sec)
+mysql> alter table suppliers modify column supplierName varchar(40);
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc suppliers;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| supplierID   | int         | NO   | PRI | NULL    |       |
+| supplierName | varchar(40) | YES  |     | NULL    |       |
+| contactName  | varchar(25) | NO   |     | NULL    |       |
+| address      | varchar(30) | NO   |     | NULL    |       |
+| city         | varchar(20) | NO   |     | NULL    |       |
+| postalCode   | varchar(5)  | YES  |     | NULL    |       |
+| country      | char(20)    | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+
+mysql> insert into suppliers values(1,"Exotic Liquid","Charlotte Cooper","49 Gilbert St.","Berlin","12209","Germany");
+Query OK, 1 row affected (0.01 sec)
+mysql> insert into suppliers values(2,"New Orleans Cajun Delights","Shelley Burke","P.O.Box 78934","Mexico D.F","05023","Mexico");
+Query OK, 1 row affected (0.00 sec)
+mysql> insert into suppliers values(3,"Grandma Kelly Homestead","Regina Murphy","707 Oxford Rd.","Ann Arbor","48104","USA");
+Query OK, 1 row affected (0.01 sec)
+mysql> select * from suppliers;
++------------+----------------------------+------------------+----------------+------------+------------+---------+
+| supplierID | supplierName               | contactName      | address        | city       | postalCode | country |
++------------+----------------------------+------------------+----------------+------------+------------+---------+
+|          1 | Exotic Liquid              | Charlotte Cooper | 49 Gilbert St. | Berlin     | 12209      | Germany |
+|          2 | New Orleans Cajun Delights | Shelley Burke    | P.O.Box 78934  | Mexico D.F | 05023      | Mexico  |
+|          3 | Grandma Kelly Homestead    | Regina Murphy    | 707 Oxford Rd. | Ann Arbor  | 48104      | USA     |
++------------+----------------------------+------------------+----------------+------------+------------+---------+
+3 rows in set (0.01 sec)
+
+mysql> select city from customers1 union select city from suppliers order by city;
++------------+
+| city       |
++------------+
+| Ann Arbor  |
+| Berlin     |
+| Mexico D.F |
++------------+
+3 rows in set (0.01 sec)
+
+mysql> select city from customers1 union all select city from suppliers order by city;
++------------+
+| city       |
++------------+
+| Ann Arbor  |
+| Berlin     |
+| Berlin     |
+| Mexico D.F |
+| Mexico D.F |
+| Mexico D.F |
++------------+
+6 rows in set (0.00 sec)
+
+mysql> select city,country from customers1 where country="Germany" union all select city,country from suppliers where country="Germany" order by city;
++--------+---------+
+| city   | country |
++--------+---------+
+| Berlin | Germany |
+| Berlin | Germany |
++--------+---------+
+2 rows in set (0.00 sec)
+mysql> select customerName,supplierName,c.city,s.city from customers1 c inner join suppliers s on c.city=s.city;
++----------------+----------------------------+------------+------------+
+| customerName   | supplierName               | city       | city       |
++----------------+----------------------------+------------+------------+
+| AlfredsFutter  | Exotic Liquid              | Berlin     | Berlin     |
+| Antonio Moreno | New Orleans Cajun Delights | Mexico D.F | Mexico D.F |
+| Ana helados    | New Orleans Cajun Delights | Mexico D.F | Mexico D.F |
++----------------+----------------------------+------------+------------+
+3 rows in set (0.01 sec)
+mysql> select country from suppliers where country not in (select country from customers1);
++---------+
+| country |
++---------+
+| USA     |
++---------+
+1 row in set (0.00 sec)

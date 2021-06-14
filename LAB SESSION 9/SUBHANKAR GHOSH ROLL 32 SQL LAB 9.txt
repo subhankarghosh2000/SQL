@@ -1,0 +1,237 @@
+mysql> use subhankar;
+Database changed
+mysql> create table Customer1(
+    -> Cust_id int primary key,
+    -> cust_name char(20) not null,
+    -> annual_reveneu int,
+    -> cust_type char(20),
+    -> check(Cust_id>=100 and Cust_id<=1000),
+    -> check(Cust_type in ('MANUFACTURER','WHOLESALER','RETAILER'))
+    -> );
+Query OK, 0 rows affected (0.13 sec)
+
+mysql> desc Customer1;
++----------------+----------+------+-----+---------+-------+
+| Field          | Type     | Null | Key | Default | Extra |
++----------------+----------+------+-----+---------+-------+
+| Cust_id        | int      | NO   | PRI | NULL    |       |
+| cust_name      | char(20) | NO   |     | NULL    |       |
+| annual_reveneu | int      | YES  |     | NULL    |       |
+| cust_type      | char(20) | YES  |     | NULL    |       |
++----------------+----------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+mysql> create table City(
+    -> city_name char(20) primary key,
+    -> population int not null
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> desc City;
++------------+----------+------+-----+---------+-------+
+| Field      | Type     | Null | Key | Default | Extra |
++------------+----------+------+-----+---------+-------+
+| city_name  | char(20) | NO   | PRI | NULL    |       |
+| population | int      | NO   |     | NULL    |       |
++------------+----------+------+-----+---------+-------+
+2 rows in set (0.01 sec)
+mysql> create table truck(
+    -> truck_no int not null primary key,
+    -> driver_name char(25) not null
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc truck;
++-------------+----------+------+-----+---------+-------+
+| Field       | Type     | Null | Key | Default | Extra |
++-------------+----------+------+-----+---------+-------+
+| truck_no    | int      | NO   | PRI | NULL    |       |
+| driver_name | char(25) | NO   |     | NULL    |       |
++-------------+----------+------+-----+---------+-------+
+2 rows in set (0.01 sec)
+mysql> create table shipment(
+    -> shipment_no int not null,
+    -> cust_id int not null references Customer1(Cust_id) on delete cascade on update cascade,
+    -> weight int,
+    -> truck_no int references truck(truck_no),
+    -> destination char references City(city_name),
+    -> ship_date date,
+    -> check(weight<1000),
+    -> primary key(shipment_no,cust_id)
+    -> );
+Query OK, 0 rows affected (0.17 sec)
+
+mysql> desc shipment;
++-------------+---------+------+-----+---------+-------+
+| Field       | Type    | Null | Key | Default | Extra |
++-------------+---------+------+-----+---------+-------+
+| shipment_no | int     | NO   | PRI | NULL    |       |
+| cust_id     | int     | NO   | PRI | NULL    |       |
+| weight      | int     | YES  |     | NULL    |       |
+| truck_no    | int     | YES  |     | NULL    |       |
+| destination | char(1) | YES  |     | NULL    |       |
+| ship_date   | date    | YES  |     | NULL    |       |
++-------------+---------+------+-----+---------+-------+
+6 rows in set (0.04 sec)
+
+mysql>  alter table shipment modify destination char(20);
+Query OK, 0 rows affected (0.11 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc shipment;
++-------------+----------+------+-----+---------+-------+
+| Field       | Type     | Null | Key | Default | Extra |
++-------------+----------+------+-----+---------+-------+
+| shipment_no | int      | NO   | PRI | NULL    |       |
+| cust_id     | int      | NO   | PRI | NULL    |       |
+| weight      | int      | YES  |     | NULL    |       |
+| truck_no    | int      | YES  |     | NULL    |       |
+| destination | char(20) | YES  |     | NULL    |       |
+| ship_date   | date     | YES  |     | NULL    |       |
++-------------+----------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+mysql> insert into Customer1 values(101,"Cruyff",12000,"MANUFACTURER");
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into Customer1 values(102,"Bekham",13000,"MANUFACTURER");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Customer1 values(102,"Torres",11000,"WHOLESALER");
+ERROR 1062 (23000): Duplicate entry '102' for key 'customer1.PRIMARY'
+mysql> insert into Customer1 values(103,"Torres",11000,"WHOLESALER");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Customer1 values(104,"Pirlo",16000,"WHOLESALER");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from Customer1;
++---------+-----------+----------------+--------------+
+| Cust_id | cust_name | annual_reveneu | cust_type    |
++---------+-----------+----------------+--------------+
+|     101 | Cruyff    |          12000 | MANUFACTURER |
+|     102 | Bekham    |          13000 | MANUFACTURER |
+|     103 | Torres    |          11000 | WHOLESALER   |
+|     104 | Pirlo     |          16000 | WHOLESALER   |
++---------+-----------+----------------+--------------+
+4 rows in set (0.01 sec)
+
+mysql> insert into City values("Kolkata",6575272);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into City values("Chennai",572272);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into City values("Mumbai",2572272);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into City values("Delhi",1572272);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from City;
++-----------+------------+
+| city_name | population |
++-----------+------------+
+| Chennai   |     572272 |
+| Delhi     |    1572272 |
+| Kolkata   |    6575272 |
+| Mumbai    |    2572272 |
++-----------+------------+
+4 rows in set (0.00 sec)
+
+mysql> insert into truck values(1,"Suraj");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into truck values(2,"Rajan");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into truck values(3,"Raman");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into truck values(4,"Shyam");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from truck;
++----------+-------------+
+| truck_no | driver_name |
++----------+-------------+
+|        1 | Suraj       |
+|        2 | Rajan       |
+|        3 | Raman       |
+|        4 | Shyam       |
++----------+-------------+
+4 rows in set (0.00 sec)
+mysql> insert into shipment values(270,101,165,1,"Kolkata","10-12-2012");
+ERROR 1292 (22007): Incorrect date value: '10-12-2012' for column 'ship_date' at row 1
+mysql> insert into shipment values(270,101,165,1,"Kolkata","2012-12-10");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into shipment values(260,101,278,2,"Chennai","2019-02-01");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into shipment values(320,102,738,2,"Mumbai","2019-11-03");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into shipment values(200,103,700,3,"Kolkata","2019-10-03");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into shipment values(201,103,155,4,"Chennai","2019-10-13");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into shipment values(202,104,365,4,"Mumbai","2019-11-13");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into shipment values(205,104,365,1,"Delhi","2018-11-13");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from shipment;
++-------------+---------+--------+----------+-------------+------------+
+| shipment_no | cust_id | weight | truck_no | destination | ship_date  |
++-------------+---------+--------+----------+-------------+------------+
+|         200 |     103 |    700 |        3 | Kolkata     | 2019-10-03 |
+|         201 |     103 |    155 |        4 | Chennai     | 2019-10-13 |
+|         202 |     104 |    365 |        4 | Mumbai      | 2019-11-13 |
+|         205 |     104 |    365 |        1 | Delhi       | 2018-11-13 |
+|         260 |     101 |    278 |        2 | Chennai     | 2019-02-01 |
+|         270 |     101 |    165 |        1 | Kolkata     | 2012-12-10 |
+|         320 |     102 |    738 |        2 | Mumbai      | 2019-11-03 |
++-------------+---------+--------+----------+-------------+------------+
+7 rows in set (0.01 sec)
+mysql> select cust_name from Customer1 where Cust_id in (select Cust_id from shipment where destination in ('Kolkata', 'Chennai', 'Mumbai'));
++-----------+
+| cust_name |
++-----------+
+| Cruyff    |
+| Bekham    |
+| Torres    |
+| Pirlo     |
++-----------+
+4 rows in set (0.01 sec)
+
+mysql> select driver_name from truck where truck_no in (select truck_no from shipment where weight > 200);
++-------------+
+| driver_name |
++-------------+
+| Suraj       |
+| Rajan       |
+| Raman       |
+| Shyam       |
++-------------+
+4 rows in set (0.01 sec)
+
+mysql> select max(weight) Max_Weight, min(weight) Min_Weight from shipment;
++------------+------------+
+| Max_Weight | Min_Weight |
++------------+------------+
+|        738 |        155 |
++------------+------------+
+1 row in set (0.00 sec)
+
+mysql> select cust_name, avg(weight) from Customer1 inner join shipment on customer1.Cust_id = shipment.Cust_id group by cust_name;
++-----------+-------------+
+| cust_name | avg(weight) |
++-----------+-------------+
+| Torres    |    427.5000 |
+| Pirlo     |    365.0000 |
+| Cruyff    |    221.5000 |
+| Bekham    |    738.0000 |
++-----------+-------------+
+4 rows in set (0.01 sec)
